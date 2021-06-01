@@ -1,6 +1,6 @@
-# Fluctuations in HbA1c Testing During the COVID-19 Pandemic
+# HbA1c Test Results During the COVID-19 Pandemic
 
-This is the code and configuration for an OpenSAFELY analysis examining the disruption in HbA1c testing during the COVID-19 pandemic.
+This is the code and configuration for an OpenSAFELY analysis examining HbA1c test results during the COVID-19 pandemic.
 
 * The paper is [here]()
 * Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/`
