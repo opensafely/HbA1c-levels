@@ -92,6 +92,34 @@ study = StudyDefinition(
             "South East": 0.2, }},
             "incidence": 0.8}
     ),
+    
+    # Index of multiple deprivation
+    imd = patients.categorised_as(
+        {"0": "DEFAULT",
+         "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+         "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+         "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+         "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+         "5": """index_of_multiple_deprivation >= 32844*4/5 """,
+        },
+        index_of_multiple_deprivation = patients.address_as_of(
+            "index_date",
+            returning = "index_of_multiple_deprivation",
+            round_to_nearest = 100,
+        ),
+        return_expectations = {
+            "rate": "universal",
+            "category": {
+            "ratios": {
+                "0": 0.01,
+                "1": 0.20,
+                "2": 0.20,
+                "3": 0.20,
+                "4": 0.20,
+                "5": 0.19,
+            }},
+        },
+    ),    
                        
     # Diabetes
     preexisting_type1_diabetes=patients.with_these_clinical_events(
@@ -139,6 +167,17 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
+    
+    hba1c_abnormal=patients.categorised_as(
+        {"0": "DEFAULT", "1": """hba1c_percentage > 6.0"""},
+        return_expectations = {"rate": "universal",
+                              "category": {
+                                  "ratios": {
+                                      "0": 0.94,
+                                      "1": 0.06,
+                                  }},
+                              },
+    ),
                        
 )
 
@@ -146,23 +185,23 @@ study = StudyDefinition(
 #  Measure  #
 #############    
     
-# measures = [
-#     Measure(
-#         id = "hba1c_by_sex",
-#         numerator = "hba1c",
-#         denominator = "population",
-#         group_by = "sex",
-#     ),
-#     Measure(
-#         id = "hba1c_by_age",
-#         numerator = "hba1c",
-#         denominator = "population",
-#         group_by = "age_group",
-#     ),
-#     Measure(
-#         id = "hba1c_by_region",
-#         numerator = "hba1c",
-#         denominator = "population",
-#         group_by = "region",
-#     ),
-# ]
+measures = [
+    Measure(
+        id = "hba1c_abnormal_by_sex",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "sex",
+    ),
+    Measure(
+        id = "hba1c_abnormal_by_age",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "age_group",
+    ),
+    Measure(
+        id = "hba1c_abnormal_by_region",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "region",
+    ),
+]
