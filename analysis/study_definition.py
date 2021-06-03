@@ -169,7 +169,7 @@ study = StudyDefinition(
     ),
     
     hba1c_abnormal=patients.categorised_as(
-        {"0": "DEFAULT", "1": """hba1c_percentage > 6.0"""},
+        {"0": "DEFAULT", "1": """hba1c_percentage > 6.0 OR hba1c_mmol_per_mol >= 42"""},
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
