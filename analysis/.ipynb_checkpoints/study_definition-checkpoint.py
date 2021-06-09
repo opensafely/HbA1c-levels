@@ -187,6 +187,30 @@ study = StudyDefinition(
     
 measures = [
     Measure(
+        id = "hba1c_abnormal",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by="population",
+    ),
+    Measure(
+        id = "hba1c_abnormal_diabetes1",
+        numerator = "hba1c_abnormal",
+        denominator = "preexisting_type1_diabetes",
+        group_by="preexisting_type1_diabetes",
+    ),
+    Measure(
+        id = "hba1c_abnormal_diabetes2",
+        numerator = "hba1c_abnormal",
+        denominator = "preexisting_type2_diabetes",
+        group_by="preexisting_type2_diabetes",
+    ),
+    Measure(
+        id = "hba1c_abnormal_diabetes_unk",
+        numerator = "hba1c_abnormal",
+        denominator = "preexisting_unknown_diabetes",
+        group_by="preexisting_unknown_diabetes",
+    ),
+    Measure(
         id = "hba1c_abnormal_by_sex",
         numerator = "hba1c_abnormal",
         denominator = "population",
@@ -203,5 +227,11 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = "region",
+    ),
+    Measure(
+        id = "hba1c_abnormal_by_imd",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "imd",
     ),
 ]
