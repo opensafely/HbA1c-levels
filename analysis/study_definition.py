@@ -33,9 +33,7 @@ study = StudyDefinition(
     index_date = "2019-01-01",
 
     # Limiting to patients registered since the start of 2019
-    population=patients.registered_with_one_practice_between(
-        "index_date", "index_date"
-    ),
+    population=patients.registered_as_of("index_date"),
     
     # Sex
     sex = patients.sex(return_expectations={
@@ -122,86 +120,86 @@ study = StudyDefinition(
     ),    
                        
     # Diabetes
-    preexisting_type1_diabetes=patients.with_these_clinical_events(
+    type1_diabetes=patients.with_these_clinical_events(
     diabetes_t1_codes,
-    on_or_before="2020-01-31",
+    on_or_before="index_date",
     return_first_date_in_period=True,
     include_month=True,
     ),
 
-    preexisting_type2_diabetes=patients.with_these_clinical_events(
+    type2_diabetes=patients.with_these_clinical_events(
         diabetes_t2_codes,
-        on_or_before="2020-01-31",
+        on_or_before="index_date",
         return_first_date_in_period=True,
         include_month=True,
     ),
 
-    preexisting_unknown_diabetes=patients.with_these_clinical_events(
+    unknown_diabetes=patients.with_these_clinical_events(
         diabetes_unknown_codes,
-        on_or_before="2020-01-31",
+        on_or_before="index_date",
         return_first_date_in_period=True,
         include_month=True,
     ),         
     
-#      diabetes_type=patients.categorised_as(
-#         {
-#             "T1DM":
-#                 """
-#                         (type1_diabetes AND NOT
-#                         type2_diabetes) 
-#                     OR
-#                         (((type1_diabetes AND type2_diabetes) OR 
-#                         (type1_diabetes AND unknown_diabetes AND NOT type2_diabetes) OR
-#                         (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
-#                         AND 
-#                         (insulin_lastyear_meds > 0 AND NOT
-#                         oad_lastyear_meds > 0))
-#                 """,
-#             "T2DM":
-#                 """
-#                         (type2_diabetes AND NOT
-#                         type1_diabetes)
-#                     OR
-#                         (((type1_diabetes AND type2_diabetes) OR 
-#                         (type2_diabetes AND unknown_diabetes AND NOT type1_diabetes) OR
-#                         (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
-#                         AND 
-#                         (oad_lastyear_meds > 0))
-#                 """,
-#             "UNKNOWN_DM":
-#                 """
-#                         ((unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes) AND NOT
-#                         oad_lastyear_meds AND NOT
-#                         insulin_lastyear_meds) 
+     diabetes_type=patients.categorised_as(
+        {
+            "T1DM":
+                """
+                        (type1_diabetes AND NOT
+                        type2_diabetes) 
+                    OR
+                        (((type1_diabetes AND type2_diabetes) OR 
+                        (type1_diabetes AND unknown_diabetes AND NOT type2_diabetes) OR
+                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
+                        AND 
+                        (insulin_lastyear_meds > 0 AND NOT
+                        oad_lastyear_meds > 0))
+                """,
+            "T2DM":
+                """
+                        (type2_diabetes AND NOT
+                        type1_diabetes)
+                    OR
+                        (((type1_diabetes AND type2_diabetes) OR 
+                        (type2_diabetes AND unknown_diabetes AND NOT type1_diabetes) OR
+                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
+                        AND 
+                        (oad_lastyear_meds > 0))
+                """,
+            "UNKNOWN_DM":
+                """
+                        ((unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes) AND NOT
+                        oad_lastyear_meds AND NOT
+                        insulin_lastyear_meds) 
                    
-#                 """,
-#             "NO_DM": "DEFAULT",
-#         },
+                """,
+            "NO_DM": "DEFAULT",
+        },
 
-#         return_expectations={
-#             "category": {"ratios": {"T1DM": 0.03, "T2DM": 0.2, "UNKNOWN_DM": 0.02, "NO_DM": 0.75}},
-#             "rate" : "universal"
+        return_expectations={
+            "category": {"ratios": {"T1DM": 0.03, "T2DM": 0.2, "UNKNOWN_DM": 0.02, "NO_DM": 0.75}},
+            "rate" : "universal"
 
-#         },
+        },
 
  
-#         oad_lastyear_meds=patients.with_these_medications(
-#             oad_med_codes, 
-#             between=["2019-09-01", "2020-08-31"],
-#             returning="number_of_matches_in_period",
-#         ),
-#         insulin_lastyear_meds=patients.with_these_medications(
-#             insulin_med_codes,
-#             between=["2019-09-01", "2020-08-31"],
-#             returning="number_of_matches_in_period",
-#         ),
-#     ),
+        oad_lastyear_meds=patients.with_these_medications(
+            oad_med_codes, 
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="number_of_matches_in_period",
+        ),
+        insulin_lastyear_meds=patients.with_these_medications(
+            insulin_med_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="number_of_matches_in_period",
+        ),
+    ),
     
     # HbA1c Test
     hba1c_mmol_per_mol=patients.with_these_clinical_events(
     hba1c_new_codes,
     find_last_match_in_period=True,
-    between=["2019-01-01", "2021-06-01"],
+    between=["index_date", "last_day_of_month(index_date)"],
     returning="numeric_value",
     include_date_of_match=True,
     return_expectations={
@@ -213,7 +211,7 @@ study = StudyDefinition(
     hba1c_percentage=patients.with_these_clinical_events(
         hba1c_old_codes,
         find_last_match_in_period=True,
-        between=["2019-01-01", "2021-06-01"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="numeric_value",
         include_date_of_match=True,
         return_expectations={
@@ -246,24 +244,12 @@ measures = [
         denominator = "population",
         group_by="population",
     ),
-#     Measure(
-#         id = "hba1c_abnormal_diabetes1",
-#         numerator = "hba1c_abnormal",
-#         denominator = "preexisting_type1_diabetes",
-#         group_by="preexisting_type1_diabetes",
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_diabetes2",
-#         numerator = "hba1c_abnormal",
-#         denominator = "preexisting_type2_diabetes",
-#         group_by="preexisting_type2_diabetes",
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_diabetes_unk",
-#         numerator = "hba1c_abnormal",
-#         denominator = "preexisting_unknown_diabetes",
-#         group_by="preexisting_unknown_diabetes",
-#     ),
+    Measure(
+        id = "hba1c_abnormal_by_diabetes_type",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by="diabetes_type",
+    ),
     Measure(
         id = "hba1c_abnormal_by_sex",
         numerator = "hba1c_abnormal",

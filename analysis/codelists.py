@@ -17,6 +17,17 @@ diabetes_unknown_codes = codelist_from_csv(
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
 hba1c_old_codes = codelist(["X772q", "XaERo", "XaERp"], system="ctv3")
 
-# hba1c_codes = codelist_from_csv(
-#     "codelists/opensafely-glycated-haemoglobin-hba1c-tests-2ab11f20.csv", system="snomed", column="code"
-# )
+# Insulin medication
+insulin_med_codes = codelist_from_csv(
+    "codelists/opensafely-insulin-medication.csv", 
+    system="snomed", 
+    column="id"
+)
+
+# Antidiabetic drugs
+oad_med_codes = codelist_from_csv(
+    "codelists/opensafely-antidiabetic-drugs.csv",
+    system="snomed",
+    column="id"
+)
+
