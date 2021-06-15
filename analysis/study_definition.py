@@ -123,21 +123,21 @@ study = StudyDefinition(
     type1_diabetes=patients.with_these_clinical_events(
     diabetes_t1_codes,
     on_or_before="index_date",
-    return_first_date_in_period=True,
+    return_last_date_in_period=True,
     include_month=True,
     ),
 
     type2_diabetes=patients.with_these_clinical_events(
         diabetes_t2_codes,
         on_or_before="index_date",
-        return_first_date_in_period=True,
+        return_last_date_in_period=True,
         include_month=True,
     ),
 
     unknown_diabetes=patients.with_these_clinical_events(
         diabetes_unknown_codes,
         on_or_before="index_date",
-        return_first_date_in_period=True,
+        return_last_date_in_period=True,
         include_month=True,
     ),         
     
@@ -182,15 +182,16 @@ study = StudyDefinition(
 
         },
 
- 
+        # Patient took antidiabetic drugs
         oad_lastyear_meds=patients.with_these_medications(
             oad_med_codes, 
-            between=["index_date", "last_day_of_month(index_date)"],
+            between=["index_date - 365 days", "index_date - 1 day"],
             returning="number_of_matches_in_period",
         ),
+        # Patient took insulin
         insulin_lastyear_meds=patients.with_these_medications(
             insulin_med_codes,
-            between=["index_date", "last_day_of_month(index_date)"],
+            between=["index_date - 365 days", "index_date - 1 day"],
             returning="number_of_matches_in_period",
         ),
     ),
