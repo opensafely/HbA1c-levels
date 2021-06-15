@@ -44,13 +44,13 @@ study = StudyDefinition(
     # Age
     age_group = patients.categorised_as(
         {
-            "0-19": "age >= 0 AND age < 19",
-            "20-29": "age >= 20 AND age < 29",
-            "30-39": "age >= 30 AND age < 39",
-            "40-49": "age >= 40 AND age < 49",
-            "50-59": "age >= 50 AND age < 59",
-            "60-69": "age >= 60 AND age < 69",
-            "70-79": "age >= 70 AND age < 79",
+            "0-19": "age >= 0 AND age <= 19",
+            "20-29": "age >= 20 AND age <= 29",
+            "30-39": "age >= 30 AND age <= 39",
+            "40-49": "age >= 40 AND age <= 49",
+            "50-59": "age >= 50 AND age <= 59",
+            "60-69": "age >= 60 AND age <= 69",
+            "70-79": "age >= 70 AND age <= 79",
             "80+": "age >= 80",
             "missing": "DEFAULT",
         },
@@ -93,12 +93,13 @@ study = StudyDefinition(
     
     # Index of multiple deprivation
     imd = patients.categorised_as(
-        {"0": "DEFAULT",
-         "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
-         "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
-         "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
-         "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
-         "5": """index_of_multiple_deprivation >= 32844*4/5 """,
+        {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 """,
         },
         index_of_multiple_deprivation = patients.address_as_of(
             "index_date",
@@ -108,23 +109,24 @@ study = StudyDefinition(
         return_expectations = {
             "rate": "universal",
             "category": {
-            "ratios": {
-                "0": 0.01,
-                "1": 0.20,
-                "2": 0.20,
-                "3": 0.20,
-                "4": 0.20,
-                "5": 0.19,
-            }},
+                "ratios": {
+                    "0": 0.01,
+                    "1": 0.20,
+                    "2": 0.20,
+                    "3": 0.20,
+                    "4": 0.20,
+                    "5": 0.19,
+                }
+            },
         },
     ),    
                        
     # Diabetes
     type1_diabetes=patients.with_these_clinical_events(
-    diabetes_t1_codes,
-    on_or_before="index_date",
-    return_last_date_in_period=True,
-    include_month=True,
+        diabetes_t1_codes,
+        on_or_before="index_date",
+        return_last_date_in_period=True,
+        include_month=True,
     ),
 
     type2_diabetes=patients.with_these_clinical_events(
@@ -228,7 +230,8 @@ study = StudyDefinition(
                                   "ratios": {
                                       "0": 0.94,
                                       "1": 0.06,
-                                  }},
+                                      }
+                                  },
                               },
     ),
                        
