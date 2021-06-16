@@ -24,3 +24,10 @@ actions:
     outputs:
       moderately_sensitive:
         cohort: output/descriptive_*.png
+        
+  generate_notebook:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/hba1c_levels.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        notebook: output/hba1c_levels.html
