@@ -36,17 +36,11 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         took_hba1c AND 
-        registered AND
-        (sex = 'F' OR sex='M') AND
-        (age != 0)
+        registered
         """,
-        # Indicator for registration
-        registered = patients.registered_as_of("index_date"),
-    ),
-    
-    # Indicator for test
-    took_hba1c=patients.with_these_clinical_events(
-        combine_codelists(hba1c_old_codes, hba1c_new_codes),
+        # Indicator for test
+        took_hba1c=patients.with_these_clinical_events(
+        hba1c_new_codes,
         find_last_match_in_period=True,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
@@ -54,6 +48,9 @@ study = StudyDefinition(
             "incidence": 0.1,
         }
     ), 
+        # Indicator for registration
+        registered = patients.registered_as_of("index_date"),
+    ),
     
     # Sex
     sex = patients.sex(return_expectations={
@@ -64,13 +61,13 @@ study = StudyDefinition(
     # Age
     age_group = patients.categorised_as(
         {
-            "0-19": "age >= 0 AND age <= 19",
-            "20-29": "age >= 20 AND age <= 29",
-            "30-39": "age >= 30 AND age <= 39",
-            "40-49": "age >= 40 AND age <= 49",
-            "50-59": "age >= 50 AND age <= 59",
-            "60-69": "age >= 60 AND age <= 69",
-            "70-79": "age >= 70 AND age <= 79",
+            "0-19": "age >= 0 AND age < 20",
+            "20-29": "age >= 20 AND age < 30",
+            "30-39": "age >= 30 AND age < 40",
+            "40-49": "age >= 40 AND age < 50",
+            "50-59": "age >= 50 AND age < 60",
+            "60-69": "age >= 60 AND age < 70",
+            "70-79": "age >= 70 AND age < 80",
             "80+": "age >= 80",
             "missing": "DEFAULT",
         },
@@ -99,15 +96,19 @@ study = StudyDefinition(
     region = patients.registered_practice_as_of(
         "index_date",
         returning = "nuts1_region_name",
-        return_expectations = {"category": {"ratios": {
-            "North East": 0.1,
-            "North West": 0.1,
-            "Yorkshire and the Humber": 0.1,
-            "East Midlands": 0.1,
-            "West Midlands": 0.1,
-            "East of England": 0.1,
-            "London": 0.2,
-            "South East": 0.2, }},
+        return_expectations = {
+            "category": {
+                "ratios": {
+                    "North East": 0.1,
+                    "North West": 0.1,
+                    "Yorkshire and the Humber": 0.1,
+                    "East Midlands": 0.1,
+                    "West Midlands": 0.1,
+                    "East of England": 0.1,
+                    "London": 0.2,
+                    "South East": 0.2, 
+                }
+            },       
             "incidence": 0.8}
     ),
     
@@ -163,7 +164,7 @@ study = StudyDefinition(
         include_month=True,
     ),         
     
-     diabetes_type=patients.categorised_as(
+    diabetes_type=patients.categorised_as(
         {
             "T1DM":
                 """
@@ -230,21 +231,10 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-
-    hba1c_percentage=patients.with_these_clinical_events(
-        hba1c_old_codes,
-        find_last_match_in_period=True,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="numeric_value",
-        include_date_of_match=True,
-        return_expectations={
-            "float": {"distribution": "normal", "mean": 5, "stddev": 2},
-            "incidence": 0.95,
-        },
-    ),
-        
+    
+    # Flag abnormal results        
     hba1c_abnormal=patients.categorised_as(
-        {"0": "DEFAULT", "1": """hba1c_percentage > 6.0 OR hba1c_mmol_per_mol >= 42"""},
+        {"0": "DEFAULT", "1": """hba1c_mmol_per_mol >= 42"""},
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
@@ -254,7 +244,7 @@ study = StudyDefinition(
                                   },
                               },
     ),
-                           
+                               
 )
 
 #############
