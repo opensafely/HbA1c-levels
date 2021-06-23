@@ -31,9 +31,29 @@ study = StudyDefinition(
     
     # Index date for comparison
     index_date = "2019-01-01",
-
-    # Limiting to patients registered since the start of 2019
-    population=patients.registered_as_of("index_date"),
+    
+    # Limiting to patients who had an HbA1c test 
+    population=patients.satisfying(
+        """
+        took_hba1c AND 
+        registered AND
+        (sex = 'F' OR sex='M') AND
+        (age != 0)
+        """,
+        # Indicator for registration
+        registered = patients.registered_as_of("index_date"),
+    ),
+    
+    # Indicator for test
+    took_hba1c=patients.with_these_clinical_events(
+        combine_codelists(hba1c_old_codes, hba1c_new_codes),
+        find_last_match_in_period=True,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={
+            "incidence": 0.1,
+        }
+    ), 
     
     # Sex
     sex = patients.sex(return_expectations={
@@ -200,14 +220,14 @@ study = StudyDefinition(
     
     # HbA1c Test
     hba1c_mmol_per_mol=patients.with_these_clinical_events(
-    hba1c_new_codes,
-    find_last_match_in_period=True,
-    between=["index_date", "last_day_of_month(index_date)"],
-    returning="numeric_value",
-    include_date_of_match=True,
-    return_expectations={
-        "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
-        "incidence": 0.95,
+        hba1c_new_codes,
+        find_last_match_in_period=True,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="numeric_value",
+        include_date_of_match=True,
+        return_expectations={
+            "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
+            "incidence": 0.95,
         },
     ),
 
@@ -222,7 +242,7 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
-    
+        
     hba1c_abnormal=patients.categorised_as(
         {"0": "DEFAULT", "1": """hba1c_percentage > 6.0 OR hba1c_mmol_per_mol >= 42"""},
         return_expectations = {"rate": "universal",
@@ -234,7 +254,7 @@ study = StudyDefinition(
                                   },
                               },
     ),
-                       
+                           
 )
 
 #############
