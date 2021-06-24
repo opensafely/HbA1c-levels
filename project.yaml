@@ -27,7 +27,7 @@ actions:
         
   generate_levels_nb:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/hba1c_levels.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_study_population, calculate_measures]
+    needs: [generate_study_population]
     outputs:
       moderately_sensitive:
         notebook: output/hba1c_levels.html
