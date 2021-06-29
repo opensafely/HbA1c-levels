@@ -302,7 +302,7 @@ measures = [
         id = "hba1c_abnormal",
         numerator = "hba1c_abnormal",
         denominator = "population",
-        group_by="population",
+        group_by = "population",
         small_number_suppression=True,
     ),
     Measure(
