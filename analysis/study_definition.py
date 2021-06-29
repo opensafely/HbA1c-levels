@@ -31,9 +31,26 @@ study = StudyDefinition(
     
     # Index date for comparison
     index_date = "2019-01-01",
-
-    # Limiting to patients registered since the start of 2019
-    population=patients.registered_as_of("index_date"),
+    
+    # Limiting to patients who had an HbA1c test 
+    population=patients.satisfying(
+        """
+        took_hba1c AND 
+        registered
+        """,
+        # Indicator for test
+        took_hba1c=patients.with_these_clinical_events(
+        hba1c_new_codes,
+        find_last_match_in_period=True,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={
+            "incidence": 0.1,
+        }
+    ), 
+        # Indicator for registration
+        registered = patients.registered_as_of("index_date"),
+    ),
     
     # Sex
     sex = patients.sex(return_expectations={
@@ -44,13 +61,13 @@ study = StudyDefinition(
     # Age
     age_group = patients.categorised_as(
         {
-            "0-19": "age >= 0 AND age <= 19",
-            "20-29": "age >= 20 AND age <= 29",
-            "30-39": "age >= 30 AND age <= 39",
-            "40-49": "age >= 40 AND age <= 49",
-            "50-59": "age >= 50 AND age <= 59",
-            "60-69": "age >= 60 AND age <= 69",
-            "70-79": "age >= 70 AND age <= 79",
+            "0-19": "age >= 0 AND age < 20",
+            "20-29": "age >= 20 AND age < 30",
+            "30-39": "age >= 30 AND age < 40",
+            "40-49": "age >= 40 AND age < 50",
+            "50-59": "age >= 50 AND age < 60",
+            "60-69": "age >= 60 AND age < 70",
+            "70-79": "age >= 70 AND age < 80",
             "80+": "age >= 80",
             "missing": "DEFAULT",
         },
@@ -79,15 +96,19 @@ study = StudyDefinition(
     region = patients.registered_practice_as_of(
         "index_date",
         returning = "nuts1_region_name",
-        return_expectations = {"category": {"ratios": {
-            "North East": 0.1,
-            "North West": 0.1,
-            "Yorkshire and the Humber": 0.1,
-            "East Midlands": 0.1,
-            "West Midlands": 0.1,
-            "East of England": 0.1,
-            "London": 0.2,
-            "South East": 0.2, }},
+        return_expectations = {
+            "category": {
+                "ratios": {
+                    "North East": 0.1,
+                    "North West": 0.1,
+                    "Yorkshire and the Humber": 0.1,
+                    "East Midlands": 0.1,
+                    "West Midlands": 0.1,
+                    "East of England": 0.1,
+                    "London": 0.2,
+                    "South East": 0.2, 
+                }
+            },       
             "incidence": 0.8}
     ),
     
@@ -141,9 +162,9 @@ study = StudyDefinition(
         on_or_before="index_date",
         return_last_date_in_period=True,
         include_month=True,
-    ),         
+    ),
     
-     diabetes_type=patients.categorised_as(
+    diabetes_type=patients.categorised_as(
         {
             "T1DM":
                 """
@@ -198,33 +219,67 @@ study = StudyDefinition(
         ),
     ),
     
-    # HbA1c Test
-    hba1c_mmol_per_mol=patients.with_these_clinical_events(
-    hba1c_new_codes,
-    find_last_match_in_period=True,
-    between=["index_date", "last_day_of_month(index_date)"],
-    returning="numeric_value",
-    include_date_of_match=True,
-    return_expectations={
-        "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
-        "incidence": 0.95,
+    # Indicators for diabetes type
+    diabetes_t1=patients.categorised_as(
+        {
+            '0':'DEFAULT', 
+            '1': 
+                 """
+                        (type1_diabetes AND NOT
+                        type2_diabetes) 
+                    OR
+                        (((type1_diabetes AND type2_diabetes) OR 
+                        (type1_diabetes AND unknown_diabetes AND NOT type2_diabetes) OR
+                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
+                        AND 
+                        (insulin_lastyear_meds > 0 AND NOT
+                        oad_lastyear_meds > 0))
+                    """
+        },
+        return_expectations={
+            "category": {"ratios": {"0": 0.97, "1": 0.03}},
+            "rate" : "universal"
+        },
+        
+    ),
+    
+    diabetes_t2=patients.categorised_as(
+        {
+            '0':'DEFAULT', 
+            '1': 
+                """
+                        (type2_diabetes AND NOT
+                        type1_diabetes)
+                    OR
+                        (((type1_diabetes AND type2_diabetes) OR 
+                        (type2_diabetes AND unknown_diabetes AND NOT type1_diabetes) OR
+                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
+                        AND 
+                        (oad_lastyear_meds > 0))
+                """,
+        },
+        return_expectations={
+            "category": {"ratios": {"0": 0.8, "1": 0.2}},
+            "rate" : "universal"
         },
     ),
-
-    hba1c_percentage=patients.with_these_clinical_events(
-        hba1c_old_codes,
+    
+    # HbA1c Test
+    hba1c_mmol_per_mol=patients.with_these_clinical_events(
+        hba1c_new_codes,
         find_last_match_in_period=True,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="numeric_value",
         include_date_of_match=True,
         return_expectations={
-            "float": {"distribution": "normal", "mean": 5, "stddev": 2},
+            "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
             "incidence": 0.95,
         },
     ),
     
+    # Flag abnormal results        
     hba1c_abnormal=patients.categorised_as(
-        {"0": "DEFAULT", "1": """hba1c_percentage > 6.0 OR hba1c_mmol_per_mol >= 42"""},
+        {"0": "DEFAULT", "1": """hba1c_mmol_per_mol >= 42"""},
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
@@ -234,7 +289,7 @@ study = StudyDefinition(
                                   },
                               },
     ),
-                       
+                               
 )
 
 #############
@@ -242,11 +297,12 @@ study = StudyDefinition(
 #############    
     
 measures = [
+    # All test takers
     Measure(
         id = "hba1c_abnormal",
         numerator = "hba1c_abnormal",
         denominator = "population",
-        group_by="population",
+        group_by = "population",
         small_number_suppression=True,
     ),
     Measure(
@@ -282,6 +338,78 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = "imd",
+        small_number_suppression=True,
+    ),
+    # T1 Diabetes Only
+    Measure(
+        id = "t1dm_hba1c_abnormal",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by="diabetes_t1",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_sex",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["sex","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_age",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["age_group","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_region",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["region","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_imd",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["imd","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    # T2 Diabetes Only
+    Measure(
+        id = "t2dm_hba1c_abnormal",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by="diabetes_t2",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_sex",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["sex","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_age",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["age_group","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_region",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["region","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_imd",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["imd","diabetes_t2"],
         small_number_suppression=True,
     ),
 ]

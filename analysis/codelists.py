@@ -15,7 +15,6 @@ diabetes_unknown_codes = codelist_from_csv(
 
 # HbA1c
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
-hba1c_old_codes = codelist(["X772q", "XaERo", "XaERp"], system="ctv3")
 
 # Insulin medication
 insulin_med_codes = codelist_from_csv(
