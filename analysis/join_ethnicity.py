@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-ethnicity_df = pd.read_csv('output/input_ethnicity.csv')
+ethnicity_df = pd.read_csv('output/data/input_ethnicity.csv')
 
 for file in os.listdir('output'):
     if file.startswith('input'):
