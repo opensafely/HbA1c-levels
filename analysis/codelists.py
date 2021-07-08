@@ -13,6 +13,14 @@ diabetes_unknown_codes = codelist_from_csv(
     "codelists/opensafely-diabetes-unknown-type.csv", system="ctv3", column="CTV3ID"
 )
 
+# Ethnicity
+ethnicity_codes = codelist_from_csv(
+        "codelists/opensafely-ethnicity.csv",
+        system="ctv3",
+        column="Code",
+        category_column="Grouping_6",
+)
+
 # HbA1c
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
 
