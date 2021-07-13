@@ -107,9 +107,6 @@ study = StudyDefinition(
                 }
             },
         },
-        age = patients.age_as_of(
-            "index_date",
-        ),
     ),
                        
     # Region
