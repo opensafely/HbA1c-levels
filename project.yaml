@@ -26,7 +26,7 @@ actions:
         
   calculate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
-    needs: [generate_study_population, generate_study_population_ethnicity]
+    needs: [generate_study_population, generate_study_population_ethnicity, join_ethnicity]
     outputs:
       moderately_sensitive:
         measure_csv: output/data/measure_*.csv
