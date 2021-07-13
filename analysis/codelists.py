@@ -38,3 +38,30 @@ oad_med_codes = codelist_from_csv(
     column="id"
 )
 
+# Learning disabilities
+learning_disability_codes = codelist_from_csv(
+    "codelists/opensafely-learning-disabilities.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+
+# Severe mental illness
+psychosis_schizophrenia_bipolar_affective_disease_codes = codelist_from_csv(
+    "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+
+depression_codes = codelist_from_csv(
+    "codelists/opensafely-depression.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+
+mental_illness_codes = combine_codelists(
+    psychosis_schizophrenia_bipolar_affective_disease_codes,
+    depression_codes,
+)
+
+# Pregnant women?
+

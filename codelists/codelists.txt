@@ -4,3 +4,6 @@ opensafely/type-1-diabetes/2020-06-29
 opensafely/type-2-diabetes/2020-06-29
 opensafely/insulin-medication/2020-04-26
 opensafely/antidiabetic-drugs/2020-07-16
+opensafely/learning-disabilities/2020-07-06
+opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09
+opensafely/depression/2020-07-09

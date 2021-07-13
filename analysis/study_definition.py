@@ -289,6 +289,39 @@ study = StudyDefinition(
                                   },
                               },
     ),
+    
+    # Psychosis
+    psychosis_schiz_bipolar=patients.with_these_clinical_events(
+        psychosis_schizophrenia_bipolar_affective_disease_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+    
+    # Depression
+    depression=patients.with_these_clinical_events(
+        depression_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+    
+    # Severe mental illness
+    mental_illness=patients.with_these_clinical_events(
+        mental_illness_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.02, },
+    ),
+    
+    # Learning disabilities
+    learning_disability=patients.with_these_clinical_events(
+        learning_disability_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+
                                
 )
 
