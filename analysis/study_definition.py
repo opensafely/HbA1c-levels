@@ -91,6 +91,26 @@ study = StudyDefinition(
             "index_date",
         ),
     ),
+    
+    # Young adults
+    young_adult = patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "1": "age >= 16 AND age < 25"
+        },
+        return_expectations = {
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "0": 0.95,
+                    "1": 0.05,
+                }
+            },
+        },
+        age = patients.age_as_of(
+            "index_date",
+        ),
+    ),
                        
     # Region
     region = patients.registered_practice_as_of(
