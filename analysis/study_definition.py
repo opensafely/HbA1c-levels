@@ -13,6 +13,7 @@ from cohortextractor import (
 )
 
 from codelists import *
+import pyarrow.feather as feather
 
 ######################
 #  Study definition  #
