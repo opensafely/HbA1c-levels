@@ -62,28 +62,28 @@ study = StudyDefinition(
     # Age
     age_group = patients.categorised_as(
         {
-            "0-19": "age >= 0 AND age < 20",
-            "20-29": "age >= 20 AND age < 30",
-            "30-39": "age >= 30 AND age < 40",
-            "40-49": "age >= 40 AND age < 50",
-            "50-59": "age >= 50 AND age < 60",
-            "60-69": "age >= 60 AND age < 70",
-            "70-79": "age >= 70 AND age < 80",
-            "80+": "age >= 80",
+            "0-15": "age >= 0 AND age < 16",
+            "16-24": "age >= 16 AND age < 25",
+            "25-34": "age >= 25 AND age < 35",
+            "35-44": "age >= 35 AND age < 45",
+            "45-54": "age >= 45 AND age < 55",
+            "55-64": "age >= 55 AND age < 65",
+            "65-74": "age >= 65 AND age < 75",
+            "75+": "age >= 75",
             "missing": "DEFAULT",
         },
         return_expectations = {
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "0-19": 0.2,
-                    "20-29": 0.1,
-                    "30-39": 0.1,
-                    "40-49": 0.15,
-                    "50-59": 0.1,
-                    "60-69": 0.1,
-                    "70-79": 0.1,
-                    "80+": 0.13,
+                    "0-15": 0.2,
+                    "16-24": 0.1,
+                    "25-34": 0.1,
+                    "35-44": 0.15,
+                    "45-54": 0.1,
+                    "55-64": 0.1,
+                    "65-74": 0.1,
+                    "75+": 0.13,
                     "missing": 0.02,
                 }
             },
@@ -91,23 +91,6 @@ study = StudyDefinition(
         age = patients.age_as_of(
             "index_date",
         ),
-    ),
-    
-    # Young adults
-    young_adult = patients.categorised_as(
-        {
-            "0": "DEFAULT",
-            "1": "age >= 16 AND age < 25"
-        },
-        return_expectations = {
-            "rate": "universal",
-            "category": {
-                "ratios": {
-                    "0": 0.95,
-                    "1": 0.05,
-                }
-            },
-        },
     ),
                        
     # Region
@@ -324,9 +307,9 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.01, },
     ),
     
-    # Severe mental illness
-    mental_illness=patients.with_these_clinical_events(
-        mental_illness_codes,
+    # Dementia
+    dementia=patients.with_these_clinical_events(
+        dementia_codes,
         on_or_before="index_date",
         returning="binary_flag",
         return_expectations={"incidence": 0.02, },
@@ -339,7 +322,26 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.01, },
     ),
-
+    
+    # Mental illness
+    mental_illness=patients.categorised_as(
+        {"None": "DEFAULT", 
+         "Severe Mental Illness": """(psychosis_schiz_bipolar OR dementia) AND NOT 
+                      (depression OR learning_disability)""",
+         "Depression": """depression AND NOT 
+                          (psychosis_schiz_bipolar OR dementia OR learning_disability)"""
+        },
+        return_expectations = {"rate": "universal",
+                              "category": {
+                                  "ratios": {
+                                      "None": 0.93,
+                                      "Severe Mental Illness": 0.02,
+                                      "Depression": 0.05,
+                                      }
+                                  },
+                              },
+    
+    ),
                                
 )
 
@@ -412,13 +414,6 @@ measures = [
         group_by = "learning_disability",
         small_number_suppression=True,
     ),
-    Measure(
-        id = "hba1c_abnormal_young_adult",
-        numerator = "hba1c_abnormal",
-        denominator = "population",
-        group_by = "young_adult",
-        small_number_suppression=True,
-    ),
     # T1 Diabetes Only
     Measure(
         id = "t1dm_hba1c_abnormal",
@@ -476,13 +471,6 @@ measures = [
         group_by = ["learning_disability","diabetes_t1"],
         small_number_suppression=True,
     ),
-    Measure(
-        id = "t1dm_hba1c_abnormal_young_adult",
-        numerator = "hba1c_abnormal",
-        denominator = "population",
-        group_by = ["young_adult","diabetes_t1"],
-        small_number_suppression=True,
-    ),
     # T2 Diabetes Only
     Measure(
         id = "t2dm_hba1c_abnormal",
@@ -538,13 +526,6 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = ["learning_disability","diabetes_t2"],
-        small_number_suppression=True,
-    ),
-    Measure(
-        id = "t2dm_hba1c_abnormal_young_adult",
-        numerator = "hba1c_abnormal",
-        denominator = "population",
-        group_by = ["young_adult","diabetes_t2"],
         small_number_suppression=True,
     ),
 ]
