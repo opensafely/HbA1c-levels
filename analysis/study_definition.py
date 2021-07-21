@@ -327,9 +327,9 @@ study = StudyDefinition(
     mental_illness=patients.categorised_as(
         {"None": "DEFAULT", 
          "Severe Mental Illness": """(psychosis_schiz_bipolar OR dementia) AND NOT 
-                      (depression OR learning_disability)""",
+                      (depression)""",
          "Depression": """depression AND NOT 
-                          (psychosis_schiz_bipolar OR dementia OR learning_disability)"""
+                          (psychosis_schiz_bipolar OR dementia)"""
         },
         return_expectations = {"rate": "universal",
                               "category": {
