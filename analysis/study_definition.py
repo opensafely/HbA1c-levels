@@ -13,6 +13,7 @@ from cohortextractor import (
 )
 
 from codelists import *
+import pyarrow.feather as feather
 
 ######################
 #  Study definition  #
@@ -61,28 +62,28 @@ study = StudyDefinition(
     # Age
     age_group = patients.categorised_as(
         {
-            "0-19": "age >= 0 AND age < 20",
-            "20-29": "age >= 20 AND age < 30",
-            "30-39": "age >= 30 AND age < 40",
-            "40-49": "age >= 40 AND age < 50",
-            "50-59": "age >= 50 AND age < 60",
-            "60-69": "age >= 60 AND age < 70",
-            "70-79": "age >= 70 AND age < 80",
-            "80+": "age >= 80",
+            "0-15": "age >= 0 AND age < 16",
+            "16-24": "age >= 16 AND age < 25",
+            "25-34": "age >= 25 AND age < 35",
+            "35-44": "age >= 35 AND age < 45",
+            "45-54": "age >= 45 AND age < 55",
+            "55-64": "age >= 55 AND age < 65",
+            "65-74": "age >= 65 AND age < 75",
+            "75+": "age >= 75",
             "missing": "DEFAULT",
         },
         return_expectations = {
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "0-19": 0.2,
-                    "20-29": 0.1,
-                    "30-39": 0.1,
-                    "40-49": 0.15,
-                    "50-59": 0.1,
-                    "60-69": 0.1,
-                    "70-79": 0.1,
-                    "80+": 0.13,
+                    "0-15": 0.2,
+                    "16-24": 0.1,
+                    "25-34": 0.1,
+                    "35-44": 0.15,
+                    "45-54": 0.1,
+                    "55-64": 0.1,
+                    "65-74": 0.1,
+                    "75+": 0.13,
                     "missing": 0.02,
                 }
             },
@@ -289,6 +290,58 @@ study = StudyDefinition(
                                   },
                               },
     ),
+    
+    # Psychosis
+    psychosis_schiz_bipolar=patients.with_these_clinical_events(
+        psychosis_schizophrenia_bipolar_affective_disease_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+    
+    # Depression
+    depression=patients.with_these_clinical_events(
+        depression_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+    
+    # Dementia
+    dementia=patients.with_these_clinical_events(
+        dementia_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.02, },
+    ),
+    
+    # Learning disabilities
+    learning_disability=patients.with_these_clinical_events(
+        learning_disability_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
+    ),
+    
+    # Mental illness
+    mental_illness=patients.categorised_as(
+        {"None": "DEFAULT", 
+         "Severe Mental Illness": """(psychosis_schiz_bipolar OR dementia) AND NOT 
+                      (depression)""",
+         "Depression": """depression AND NOT 
+                          (psychosis_schiz_bipolar OR dementia)"""
+        },
+        return_expectations = {"rate": "universal",
+                              "category": {
+                                  "ratios": {
+                                      "None": 0.93,
+                                      "Severe Mental Illness": 0.02,
+                                      "Depression": 0.05,
+                                      }
+                                  },
+                              },
+    
+    ),
                                
 )
 
@@ -340,6 +393,27 @@ measures = [
         group_by = "imd",
         small_number_suppression=True,
     ),
+    Measure(
+        id = "hba1c_abnormal_by_ethnicity",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "ethnicity",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "hba1c_abnormal_by_mental_illness",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "mental_illness",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "hba1c_abnormal_by_learning_disability",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = "learning_disability",
+        small_number_suppression=True,
+    ),
     # T1 Diabetes Only
     Measure(
         id = "t1dm_hba1c_abnormal",
@@ -376,6 +450,27 @@ measures = [
         group_by = ["imd","diabetes_t1"],
         small_number_suppression=True,
     ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_ethnicity",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["ethnicity","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_mental_illness",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["mental_illness","diabetes_t1"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t1dm_hba1c_abnormal_by_learning_disability",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["learning_disability","diabetes_t1"],
+        small_number_suppression=True,
+    ),
     # T2 Diabetes Only
     Measure(
         id = "t2dm_hba1c_abnormal",
@@ -410,6 +505,27 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = ["imd","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_ethnicity",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["ethnicity","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_mental_illness",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["mental_illness","diabetes_t2"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "t2dm_hba1c_abnormal_by_learning_disability",
+        numerator = "hba1c_abnormal",
+        denominator = "population",
+        group_by = ["learning_disability","diabetes_t2"],
         small_number_suppression=True,
     ),
 ]
