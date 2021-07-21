@@ -45,7 +45,7 @@ learning_disability_codes = codelist_from_csv(
     column="CTV3Code",
 )
 
-# Severe mental illness
+# Mental illness codes
 psychosis_schizophrenia_bipolar_affective_disease_codes = codelist_from_csv(
     "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
     system="ctv3",
@@ -58,10 +58,8 @@ depression_codes = codelist_from_csv(
     column="CTV3Code",
 )
 
-mental_illness_codes = combine_codelists(
-    psychosis_schizophrenia_bipolar_affective_disease_codes,
-    depression_codes,
+dementia_codes = codelist_from_csv(
+    "codelists/opensafely-dementia-complete.csv", 
+    system="ctv3", 
+    column="code"
 )
-
-# Pregnant women?
-
