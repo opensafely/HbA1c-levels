@@ -370,7 +370,7 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = "sex",
-        small_number_suppression=True,
+        #small_number_suppression=True,
     ),
     Measure(
         id = "hba1c_abnormal_by_age",
@@ -427,7 +427,7 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = ["sex","diabetes_t1"],
-        small_number_suppression=True,
+        #small_number_suppression=True,
     ),
     Measure(
         id = "t1dm_hba1c_abnormal_by_age",
@@ -484,7 +484,7 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = ["sex","diabetes_t2"],
-        small_number_suppression=True,
+        #small_number_suppression=True,
     ),
     Measure(
         id = "t2dm_hba1c_abnormal_by_age",
