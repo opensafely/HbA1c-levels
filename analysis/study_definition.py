@@ -223,12 +223,12 @@ study = StudyDefinition(
     # Indicators for diabetes type
     diabetes_t1=patients.categorised_as(
         {
-            '0':'DEFAULT',
+            '0':'DEFAULT', 
             '1': 
                  """
                         (type1_diabetes AND NOT
                         type2_diabetes) 
-                        OR
+                    OR
                         (((type1_diabetes AND type2_diabetes) OR 
                         (type1_diabetes AND unknown_diabetes AND NOT type2_diabetes) OR
                         (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
