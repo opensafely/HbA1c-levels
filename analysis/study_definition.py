@@ -492,7 +492,7 @@ measures = [
         numerator = "hba1c_abnormal",
         denominator = "population",
         group_by = ["age_group","diabetes_t2"],
-        small_number_suppression=True,
+        #small_number_suppression=True,
     ),
     Measure(
         id = "t2dm_hba1c_abnormal_by_region",
