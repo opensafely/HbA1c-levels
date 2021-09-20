@@ -33,11 +33,18 @@ study = StudyDefinition(
     # Index date for comparison
     index_date = "2019-01-01",
     
+    # Sex
+    sex = patients.sex(return_expectations={
+        "rate": "universal",
+        "category": {"ratios": {"M": 0.49, "F": 0.51}},
+    }),
+    
     # Limiting to patients who had an HbA1c test 
     population=patients.satisfying(
         """
         took_hba1c AND 
-        registered
+        registered AND
+        (sex = 'M' OR sex = 'F')
         """,
         # Indicator for test
         took_hba1c=patients.with_these_clinical_events(
@@ -52,12 +59,6 @@ study = StudyDefinition(
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
     ),
-    
-    # Sex
-    sex = patients.sex(return_expectations={
-        "rate": "universal",
-        "category": {"ratios": {"M": 0.49, "F": 0.51}},
-    }),
                        
     # Age
     age_group = patients.categorised_as(
