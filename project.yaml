@@ -24,23 +24,23 @@ actions:
       highly_sensitive:
         cohort: output/data/input*.csv
         
-  calculate_measures:
-    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        measure_csv: output/data/measure_*.csv
+  # calculate_measures:
+  #   run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
+  #   needs: [join_ethnicity]
+  #   outputs:
+  #     moderately_sensitive:
+  #       measure_csv: output/data/measure_*.csv
         
-  generate_abnormal_nb:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/abnormal_results.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [calculate_measures]
-    outputs:
-      moderately_sensitive:
-        notebook: output/abnormal_results.html
+  # generate_abnormal_nb:
+  #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/abnormal_results.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+  #   needs: [calculate_measures]
+  #   outputs:
+  #     moderately_sensitive:
+  #       notebook: output/abnormal_results.html
         
-  generate_levels_nb:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/hba1c_levels.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        notebook: output/hba1c_levels.html
+  # generate_levels_nb:
+  #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/hba1c_levels.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+  #   needs: [join_ethnicity]
+  #   outputs:
+  #     moderately_sensitive:
+  #       notebook: output/hba1c_levels.html
