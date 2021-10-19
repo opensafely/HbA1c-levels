@@ -1,0 +1,64 @@
+{
+  "files": {
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2021-10-19 09:18:38.748973Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "opensafely-diabetes-unknown-type.csv": {
+      "id": "opensafely/diabetes-unknown-type/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/diabetes-unknown-type/2020-06-29/",
+      "downloaded_at": "2021-10-19 09:18:39.020034Z",
+      "sha": "eaaa1867e6bbcb436df91e8b75189d7ff1ca4b0c"
+    },
+    "opensafely-type-1-diabetes.csv": {
+      "id": "opensafely/type-1-diabetes/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/type-1-diabetes/2020-06-29/",
+      "downloaded_at": "2021-10-19 09:18:39.276915Z",
+      "sha": "dc4ce0fbdb8500cc7dc6288e8eec9c783e31de57"
+    },
+    "opensafely-type-2-diabetes.csv": {
+      "id": "opensafely/type-2-diabetes/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/type-2-diabetes/2020-06-29/",
+      "downloaded_at": "2021-10-19 09:18:39.566204Z",
+      "sha": "21a0fd8e041c19abd876970d75b389b6904dc901"
+    },
+    "opensafely-insulin-medication.csv": {
+      "id": "opensafely/insulin-medication/2020-04-26",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/insulin-medication/2020-04-26/",
+      "downloaded_at": "2021-10-19 09:18:39.836633Z",
+      "sha": "9d4c57c0b8738962da04b32ab43b7659cd64d774"
+    },
+    "opensafely-antidiabetic-drugs.csv": {
+      "id": "opensafely/antidiabetic-drugs/2020-07-16",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/antidiabetic-drugs/2020-07-16/",
+      "downloaded_at": "2021-10-19 09:18:40.160374Z",
+      "sha": "f0b93b0054d673e8dcfbeba8fea0cd54239f0725"
+    },
+    "opensafely-learning-disabilities.csv": {
+      "id": "opensafely/learning-disabilities/2020-07-06",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/learning-disabilities/2020-07-06/",
+      "downloaded_at": "2021-10-19 09:18:40.417503Z",
+      "sha": "ab5b5f60e8525af5898ec1066fc820501b8e5e29"
+    },
+    "opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv": {
+      "id": "opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09/",
+      "downloaded_at": "2021-10-19 09:18:40.730072Z",
+      "sha": "c7c23c83a155cab15a41b21e10e26f33ca17bc3f"
+    },
+    "opensafely-depression.csv": {
+      "id": "opensafely/depression/2020-07-09",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/depression/2020-07-09/",
+      "downloaded_at": "2021-10-19 09:18:40.975878Z",
+      "sha": "654835e97c0cee53307db7ebd8becf48d0e3f31b"
+    },
+    "opensafely-dementia-complete.csv": {
+      "id": "opensafely/dementia-complete/48c76cf8",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/dementia-complete/48c76cf8/",
+      "downloaded_at": "2021-10-19 09:18:41.283315Z",
+      "sha": "b73c9363f19a9ee9f4407e34e95e11d3eeb615f4"
+    }
+  }
+}
