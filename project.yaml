@@ -31,7 +31,7 @@ actions:
       output_path: output/data
     outputs:
       moderately_sensitive:
-        cohort_report: output/data/descriptives_input.html
+        cohort_report: output/data/descriptives_input_joined.html
         
   # calculate_measures:
   #   run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
