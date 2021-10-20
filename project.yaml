@@ -28,7 +28,7 @@ actions:
     run: cohort-report:v2.0.1 output/data/input_joined.feather
     needs: [join_ethnicity]
     config:
-      output_path: output
+      output_path: output/data
     outputs:
       moderately_sensitive:
         cohort_report: output/data/descriptives_input.html
