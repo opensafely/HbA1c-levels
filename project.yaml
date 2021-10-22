@@ -32,7 +32,7 @@ actions:
         notebook: output/data_description.html
 
   generate_charts:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/data_description.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
