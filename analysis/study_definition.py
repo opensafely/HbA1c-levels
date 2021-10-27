@@ -48,14 +48,14 @@ study = StudyDefinition(
         """,
         # Indicator for test
         took_hba1c=patients.with_these_clinical_events(
-        hba1c_new_codes,
-        find_last_match_in_period=True,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={
-            "incidence": 0.1,
-        }
-    ), 
+            hba1c_new_codes,
+            find_last_match_in_period=True,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }
+        ), 
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
     ),
@@ -222,48 +222,16 @@ study = StudyDefinition(
     ),
     
     # Indicators for diabetes type
-    diabetes_t1=patients.categorised_as(
-        {
-            '0':'DEFAULT', 
-            '1': 
-                 """
-                        (type1_diabetes AND NOT
-                        type2_diabetes) 
-                    OR
-                        (((type1_diabetes AND type2_diabetes) OR 
-                        (type1_diabetes AND unknown_diabetes AND NOT type2_diabetes) OR
-                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
-                        AND 
-                        (insulin_lastyear_meds > 0 AND NOT
-                        oad_lastyear_meds > 0))
-                    """
-        },
-        return_expectations={
-            "category": {"ratios": {"0": 0.97, "1": 0.03}},
-            "rate" : "universal"
-        },
-        
+    diabetes_t1=patients.satisfying(
+        """
+        diabetes_type = 'T1DM'
+        """         
     ),
     
-    diabetes_t2=patients.categorised_as(
-        {
-            '0':'DEFAULT', 
-            '1': 
-                """
-                        (type2_diabetes AND NOT
-                        type1_diabetes)
-                    OR
-                        (((type1_diabetes AND type2_diabetes) OR 
-                        (type2_diabetes AND unknown_diabetes AND NOT type1_diabetes) OR
-                        (unknown_diabetes AND NOT type1_diabetes AND NOT type2_diabetes))
-                        AND 
-                        (oad_lastyear_meds > 0))
-                """,
-        },
-        return_expectations={
-            "category": {"ratios": {"0": 0.8, "1": 0.2}},
-            "rate" : "universal"
-        },
+    diabetes_t2=patients.satisfying(
+        """
+        diabetes_type = 'T2DM'
+        """         
     ),
     
     # HbA1c Test
@@ -337,30 +305,6 @@ study = StudyDefinition(
                               },
     ),
     
-    # Psychosis
-    psychosis_schiz_bipolar=patients.with_these_clinical_events(
-        psychosis_schizophrenia_bipolar_affective_disease_codes,
-        on_or_before="index_date",
-        returning="binary_flag",
-        return_expectations={"incidence": 0.01, },
-    ),
-    
-    # Depression
-    depression=patients.with_these_clinical_events(
-        depression_codes,
-        on_or_before="index_date",
-        returning="binary_flag",
-        return_expectations={"incidence": 0.01, },
-    ),
-    
-    # Dementia
-    dementia=patients.with_these_clinical_events(
-        dementia_codes,
-        on_or_before="index_date",
-        returning="binary_flag",
-        return_expectations={"incidence": 0.02, },
-    ),
-    
     # Learning disabilities
     learning_disability=patients.with_these_clinical_events(
         learning_disability_codes,
@@ -373,7 +317,7 @@ study = StudyDefinition(
     mental_illness=patients.categorised_as(
         {"None": "DEFAULT", 
          "Severe Mental Illness": """(psychosis_schiz_bipolar OR dementia) AND NOT 
-                      (depression)""",
+                                     (depression)""",
          "Depression": """depression AND NOT 
                           (psychosis_schiz_bipolar OR dementia)"""
         },
@@ -386,9 +330,29 @@ study = StudyDefinition(
                                       }
                                   },
                               },
-    
-    ),
-                               
+        # Depression
+        depression=patients.with_these_clinical_events(
+            depression_codes,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence": 0.01, },
+        ),
+        # Psychosis
+        psychosis_schiz_bipolar=patients.with_these_clinical_events(
+            psychosis_schizophrenia_bipolar_affective_disease_codes,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence": 0.01, },
+        ),
+        
+        # Dementia
+        dementia=patients.with_these_clinical_events(
+            dementia_codes,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence": 0.02, },
+        ),
+    ),                             
 )
 
 #############
