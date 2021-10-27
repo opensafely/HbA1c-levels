@@ -278,6 +278,18 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
+
+    prev_hba1c_mmol_per_mol=patients.with_these_clinical_events(
+        hba1c_new_codes,
+        find_last_match_in_period=True,
+        between=["index_date - 15 months", "last_day_of_month(index_date)"],
+        returning="numeric_value",
+        include_date_of_match=True,
+        return_expectations={
+            "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
+            "incidence": 0.95,
+        },
+    ),
     
     # Flag elevated levels        
     hba1c_gt_48=patients.categorised_as(
