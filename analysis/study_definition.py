@@ -265,8 +265,8 @@ study = StudyDefinition(
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
-                                      "0": 0.94,
-                                      "1": 0.06,
+                                      "0": 0.70,
+                                      "1": 0.30,
                                       }
                                   },
                               },
@@ -276,8 +276,8 @@ study = StudyDefinition(
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
-                                      "0": 0.96,
-                                      "1": 0.04,
+                                      "0": 0.80,
+                                      "1": 0.20,
                                       }
                                   },
                               },
@@ -287,8 +287,8 @@ study = StudyDefinition(
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
-                                      "0": 0.98,
-                                      "1": 0.02,
+                                      "0": 0.90,
+                                      "1": 0.10,
                                       }
                                   },
                               },
@@ -298,8 +298,8 @@ study = StudyDefinition(
         return_expectations = {"rate": "universal",
                               "category": {
                                   "ratios": {
-                                      "0": 0.99,
-                                      "1": 0.01,
+                                      "0": 0.95,
+                                      "1": 0.05,
                                       }
                                   },
                               },
