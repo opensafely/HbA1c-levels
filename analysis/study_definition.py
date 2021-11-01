@@ -42,20 +42,9 @@ study = StudyDefinition(
     # Limiting to patients who had an HbA1c test 
     population=patients.satisfying(
         """
-        took_hba1c AND 
         registered AND
         (sex = 'M' OR sex = 'F')
         """,
-        # Indicator for test
-        took_hba1c=patients.with_these_clinical_events(
-            hba1c_new_codes,
-            find_last_match_in_period=True,
-            between=["index_date", "last_day_of_month(index_date)"],
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }
-        ), 
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
     ),
@@ -233,6 +222,17 @@ study = StudyDefinition(
         diabetes_type = 'T2DM'
         """         
     ),
+
+    # Indicator for test
+    took_hba1c=patients.with_these_clinical_events(
+        hba1c_new_codes,
+        find_last_match_in_period=True,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={
+            "incidence": 0.1,
+        }
+    ), 
     
     # HbA1c Test
     hba1c_mmol_per_mol=patients.with_these_clinical_events(
@@ -354,188 +354,3 @@ study = StudyDefinition(
         ),
     ),                             
 )
-
-#############
-#  Measure  #
-#############    
-    
-# measures = [
-#     # All test takers
-#     Measure(
-#         id = "hba1c_abnormal",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "population",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_diabetes_type",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by="diabetes_type",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_sex",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "sex",
-#         #small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_age",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "age_group",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_region",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "region",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_imd",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "imd",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_ethnicity",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "ethnicity",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_mental_illness",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "mental_illness",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "hba1c_abnormal_by_learning_disability",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = "learning_disability",
-#         small_number_suppression=True,
-#     ),
-#     # T1 Diabetes Only
-#     Measure(
-#         id = "t1dm_hba1c_abnormal",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by="diabetes_t1",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_sex",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["sex","diabetes_t1"],
-#         #small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_age",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["age_group","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_region",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["region","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_imd",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["imd","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_ethnicity",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["ethnicity","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_mental_illness",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["mental_illness","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t1dm_hba1c_abnormal_by_learning_disability",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["learning_disability","diabetes_t1"],
-#         small_number_suppression=True,
-#     ),
-#     # T2 Diabetes Only
-#     Measure(
-#         id = "t2dm_hba1c_abnormal",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by="diabetes_t2",
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_sex",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["sex","diabetes_t2"],
-#         #small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_age",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["age_group","diabetes_t2"],
-#         #small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_region",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["region","diabetes_t2"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_imd",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["imd","diabetes_t2"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_ethnicity",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["ethnicity","diabetes_t2"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_mental_illness",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["mental_illness","diabetes_t2"],
-#         small_number_suppression=True,
-#     ),
-#     Measure(
-#         id = "t2dm_hba1c_abnormal_by_learning_disability",
-#         numerator = "hba1c_abnormal",
-#         denominator = "population",
-#         group_by = ["learning_disability","diabetes_t2"],
-#         small_number_suppression=True,
-#     ),
-# ]
