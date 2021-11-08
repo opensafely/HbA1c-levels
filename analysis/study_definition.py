@@ -258,6 +258,31 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),
+    prev_hba1c_58_75 =patients.categorised_as(
+        {"0": "DEFAULT", 
+        "1": """(prev_hba1c_mmol_per_mol > 48) AND 
+                (prev_hba1c_mmol_per_mol < 76)"""},
+        return_expectations = {"rate": "universal",
+                              "category": {
+                                  "ratios": {
+                                      "0": 0.70,
+                                      "1": 0.30,
+                                      }
+                                  },
+                              },
+    ),
+    prev_hba1c_gt_75 =patients.categorised_as(
+        {"0": "DEFAULT", 
+        "1": """(prev_hba1c_mmol_per_mol > 75)"""},
+        return_expectations = {"rate": "universal",
+                              "category": {
+                                  "ratios": {
+                                      "0": 0.70,
+                                      "1": 0.30,
+                                      }
+                                  },
+                              },
+    ),
     
     # Flag elevated levels        
     hba1c_gt_48=patients.categorised_as(
@@ -354,3 +379,304 @@ study = StudyDefinition(
         ),
     ),                             
 )
+
+######################
+#      Measures      #
+######################
+
+measures = [
+    ## Total (no grouping)
+    Measure(
+        id = "total_tests",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = None,
+        small_number_suppression=True,
+    ),
+    # Thresholds  
+    Measure(
+        id = "total_tests_by_dm",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = "diabetes_type",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = "diabetes_type",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = "diabetes_type",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = "diabetes_type",
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = "diabetes_type",
+        small_number_suppression=True,
+    ),
+    # Demographics (Total)
+    Measure(
+        id = "total_tests_by_dm_and_age",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","age_group"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_sex",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","sex"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_ethnicity",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","ethnicity"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_region",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","region"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_imd",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","imd"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_ld",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","learning_disability"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "total_tests_by_dm_and_mi",
+        numerator = "took_hba1c",
+        denominator = "population",
+        group_by = ["diabetes_type","mental_illness"],
+        small_number_suppression=True,
+    ),
+    # Demographics (> 48)
+    Measure(
+        id = "tests_gt48_by_dm_and_age",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","age_group"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_sex",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","sex"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_ethnicity",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","ethnicity"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_region",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","region"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_imd",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","imd"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_ld",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","learning_disability"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt48_by_dm_and_mi",
+        numerator = "hba1c_gt_48",
+        denominator = "population",
+        group_by = ["diabetes_type","mental_illness"],
+        small_number_suppression=True,
+    ),
+    # Demographics (> 58)
+    Measure(
+        id = "tests_gt58_by_dm_and_age",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","age_group"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_sex",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","sex"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_ethnicity",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","ethnicity"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_region",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","region"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_imd",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","imd"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_ld",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","learning_disability"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt58_by_dm_and_mi",
+        numerator = "hba1c_gt_58",
+        denominator = "population",
+        group_by = ["diabetes_type","mental_illness"],
+        small_number_suppression=True,
+    ),
+    # Demographics (> 64)
+    Measure(
+        id = "tests_gt64_by_dm_and_age",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","age_group"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_sex",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","sex"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_ethnicity",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","ethnicity"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_region",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","region"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_imd",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","imd"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_ld",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","learning_disability"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt64_by_dm_and_mi",
+        numerator = "hba1c_gt_64",
+        denominator = "population",
+        group_by = ["diabetes_type","mental_illness"],
+        small_number_suppression=True,
+    ),
+    # Demographics (> 75)
+    Measure(
+        id = "tests_gt75_by_dm_and_age",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","age_group"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_sex",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","sex"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_ethnicity",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","ethnicity"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_region",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","region"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_imd",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","imd"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_ld",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","learning_disability"],
+        small_number_suppression=True,
+    ),
+    Measure(
+        id = "tests_gt75_by_dm_and_mi",
+        numerator = "hba1c_gt_75",
+        denominator = "population",
+        group_by = ["diabetes_type","mental_illness"],
+        small_number_suppression=True,
+    ),
+]

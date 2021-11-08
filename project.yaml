@@ -24,6 +24,13 @@ actions:
       highly_sensitive:
         cohort: output/data/input*.csv
 
+  calculate_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/data/measure_*.csv
+
   generate_data_description:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/data_description.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [join_ethnicity]
@@ -31,12 +38,12 @@ actions:
       moderately_sensitive:
         notebook: output/data_description.html
 
-  generate_charts:
-    run: python:latest python analysis/charts.py
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        charts1: output/gt*.png
-        charts2: output/med*.png
-        charts3: output/pct*.png
-        charts4: output/total*.png
+  # generate_charts:
+  #   run: python:latest python analysis/charts.py
+  #   needs: [join_ethnicity]
+  #   outputs:
+  #     moderately_sensitive:
+  #       charts1: output/gt*.png
+  #       charts2: output/med*.png
+  #       charts3: output/pct*.png
+  #       charts4: output/total*.png
