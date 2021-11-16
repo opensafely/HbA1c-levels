@@ -10,6 +10,12 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/data/input_*.csv
+
+  generate_study_population_median:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_median --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
+    outputs:
+      highly_sensitive:
+        cohort: output/data/input_median_*.csv
         
   generate_study_population_ethnicity:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output/data 
@@ -19,10 +25,17 @@ actions:
         
   join_ethnicity:
     run: python:latest python analysis/join_ethnicity.py 
-    needs: [generate_study_population, generate_study_population_ethnicity]
+    needs: [generate_study_population, generate_study_population_median, generate_study_population_ethnicity]
     outputs:
       highly_sensitive:
         cohort: output/data/input*.csv
+
+  calculate_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/data
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/data/measure_*.csv
 
   generate_data_description:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/data_description.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
@@ -31,9 +44,12 @@ actions:
       moderately_sensitive:
         notebook: output/data_description.html
 
-  generate_charts:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        notebook: output/charts.html
+  # generate_charts:
+  #   run: python:latest python analysis/charts.py
+  #   needs: [join_ethnicity]
+  #   outputs:
+  #     moderately_sensitive:
+  #       charts1: output/gt*.png
+  #       charts2: output/med*.png
+  #       charts3: output/pct*.png
+  #       charts4: output/total*.png
