@@ -14,10 +14,10 @@ import_vars = ['patient_id', 'took_hba1c', 'diabetes_type', 'hba1c_mmol_per_mol'
 # Read in and append input files
 li = []
 
-for file in glob('../output/data/input_20*.csv'):
+for file in glob('../output/data/input_all*.csv'):
     df_temp = pd.read_csv(file)[import_vars]
     # Creates date variable based on file name
-    df_temp['date'] = file[21:-4]
+    df_temp['date'] = file[34:-4]
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
     # Generates a count column
     df_temp['population'] = 1
