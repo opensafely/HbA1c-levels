@@ -44,7 +44,7 @@ actions:
       moderately_sensitive:
         notebook: output/data_description.html
 
-    generate_charts:
+  generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [calculate_measures, join_ethnicity]
     outputs:
