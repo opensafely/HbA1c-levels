@@ -9,7 +9,7 @@ actions:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
     outputs:
       highly_sensitive:
-        cohort: output/data/input_*.csv
+        cohort: output/data/input_all_*.csv
 
   generate_study_population_median:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_median --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
