@@ -23,30 +23,37 @@ actions:
       highly_sensitive:
         cohort: output/data/input_ethnicity.csv
         
-  join_ethnicity:
-    run: python:latest python analysis/join_ethnicity.py 
-    needs: [generate_study_population, generate_study_population_median, generate_study_population_ethnicity]
+  join_ethnicity_all_patients:
+    run: python:latest python analysis/join_ethnicity.py "input_all_patients"
+    needs: [generate_study_population, generate_study_population_ethnicity]
     outputs:
       highly_sensitive:
-        cohort: output/data/input*.csv
+        cohort: output/data/input_all_patients*.csv
+
+  join_ethnicity_median:
+    run: python:latest python analysis/join_ethnicity.py "input_median"
+    needs: [generate_study_population_median, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/data/input_median*.csv
 
   calculate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition_all_patients --output-dir=output/data
-    needs: [join_ethnicity]
+    needs: [join_ethnicity_all_patients]
     outputs:
       moderately_sensitive:
         measure_csv: output/data/measure_*.csv
 
   generate_data_description:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/data_description.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [join_ethnicity]
+    needs: [join_ethnicity_all_patients]
     outputs:
       moderately_sensitive:
         notebook: output/data_description.html
 
   generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [calculate_measures, join_ethnicity]
+    needs: [calculate_measures, join_ethnicity_all_patients, join_ethnicity_median]
     outputs:
       moderately_sensitive:
         notebook: output/charts.html
