@@ -57,13 +57,3 @@ actions:
     outputs:
       moderately_sensitive:
         notebook: output/charts.html
-
-  # generate_charts:
-  #   run: python:latest python analysis/charts.py
-  #   needs: [join_ethnicity]
-  #   outputs:
-  #     moderately_sensitive:
-  #       charts1: output/gt*.png
-  #       charts2: output/med*.png
-  #       charts3: output/pct*.png
-  #       charts4: output/total*.png
