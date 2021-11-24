@@ -38,7 +38,9 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         registered AND
-        (sex = 'M' OR sex = 'F')
+        (sex = 'M' OR sex = 'F') AND
+        (age >= 16 AND age <= 110) AND
+        (diabetes_type != 'UNKNOWN_DM')
         """,
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
