@@ -40,7 +40,8 @@ study = StudyDefinition(
         registered AND
         (sex = 'M' OR sex = 'F') AND
         (age >= 16 AND age <= 110) AND
-        (diabetes_type != 'UNKNOWN_DM')
+        (diabetes_type != 'UNKNOWN_DM') AND
+        (region != '')
         """,
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),

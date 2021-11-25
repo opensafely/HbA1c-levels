@@ -44,6 +44,13 @@ actions:
       moderately_sensitive:
         measure_csv: output/data/measure_*.csv
 
+  redact_measures:
+    run: python:latest python analysis/redact_measures.py
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/data/measure*.csv
+
   generate_data_description:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/data_description.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [join_ethnicity_all_patients]
@@ -53,7 +60,7 @@ actions:
 
   generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [calculate_measures, join_ethnicity_all_patients, join_ethnicity_median]
+    needs: [redact_measures, join_ethnicity_all_patients, join_ethnicity_median]
     outputs:
       moderately_sensitive:
         notebook: output/charts.html
