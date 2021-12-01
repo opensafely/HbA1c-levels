@@ -267,66 +267,17 @@ create_plotgrid('hba1c_gt_75_pct',df_thresholds, '% of HbA1c Tests (> 75 mmol/mo
 
 ## Median Test Values
 
-# Read in and append input files
-li = []
+def import_med(d):    
+    return pd.read_csv(f"{fpath}/input_med_t2dm_{d}.csv")
 
-# Demographics
-demo_vars = ['age_group', 'sex', 'ethnicity', 'region',
-             'imd', 'learning_disability', 'mental_illness']
-
-# NICE thresholds
-threshold_vars = ['hba1c_gt_48', 'hba1c_gt_58', 'hba1c_gt_64', 'hba1c_gt_75']
-
-# Import variables
-import_vars = threshold_vars + demo_vars + ['patient_id', 'diabetes_type', 'took_hba1c',
-                                            'prev_hba1c_mmol_per_mol', 'hba1c_mmol_per_mol']
-
-for file in glob('../output/data/input_median*.csv'):
-    df_temp = pd.read_csv(file)[import_vars]
-    # Creates date variable based on file name
-    df_temp['date'] = file[28:-4]
-    df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
-    # Generates a count column
-    df_temp['population'] = 1
-    li.append(df_temp)
-    
-df_median = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
-df_median_t2dm = df_median.loc[df_median.diabetes_type == 'T2DM']
-
-# Get patient subset with poor glycemic control prior to the pandemic
-pat_subset = df_median_t2dm.loc[df_median_t2dm.prev_hba1c_mmol_per_mol > 58]['patient_id'].unique()
-df_t2dm_subset = df_median_t2dm.loc[df_median_t2dm.patient_id.isin(pat_subset)]
-
-# 58-74 range 
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) & 
-                   (df_t2dm_subset.prev_hba1c_mmol_per_mol < 75), 
-                   'hba1c_val_58_74'] = df_t2dm_subset.hba1c_mmol_per_mol
-
-# > 75
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 75),
-                   'hba1c_val_75'] = df_t2dm_subset.hba1c_mmol_per_mol
-
-# Get median of test values
-def gen_median(df_in, group=''):
-    if group == '':
-        df_out = df_in[['date','hba1c_val_58_74','hba1c_val_75']].groupby(['date']).median().reset_index()
-    else:
-        df_out = df_in[[group] + ['date','hba1c_val_58_74','hba1c_val_75']].groupby(['date', group]).median().reset_index()
-    return df_out
-
-df_med_t2dm = gen_median(df_t2dm_subset)
-df_med_t2dm_age = gen_median(df_t2dm_subset, 'age_group')
-df_med_t2dm_sex = gen_median(df_t2dm_subset, 'sex')
-df_med_t2dm_eth = gen_median(df_t2dm_subset, 'ethnicity')
-df_med_t2dm_reg = gen_median(df_t2dm_subset, 'region')
-df_med_t2dm_imd = gen_median(df_t2dm_subset, 'imd')
-df_med_t2dm_ld = gen_median(df_t2dm_subset, 'learning_disability')
-df_med_t2dm_mi = gen_median(df_t2dm_subset, 'mental_illness')
-
-# Format fields
-df_med_t2dm_eth = df_med_t2dm_eth.replace({"ethnicity": dict_eth})
-df_med_t2dm_imd = df_med_t2dm_imd.replace({'imd': dict_imd})
-df_med_t2dm_ld = df_med_t2dm_ld.replace({'learning_disability': dict_ld})
+df_med_t2dm = import_med('all')
+df_med_t2dm_age = import_med('age')
+df_med_t2dm_sex = import_med('sex')
+df_med_t2dm_eth = import_med('eth')
+df_med_t2dm_reg = import_med('reg')
+df_med_t2dm_imd = import_med('imd')
+df_med_t2dm_ld = import_med('ld')
+df_med_t2dm_mi = import_med('mi')
 
 df_med_t2dm_wide = pd.melt(df_med_t2dm, id_vars=['date'], value_vars=['hba1c_val_58_74', 'hba1c_val_75'])
 
