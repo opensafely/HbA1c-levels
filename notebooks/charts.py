@@ -268,7 +268,9 @@ create_plotgrid('hba1c_gt_75_pct',df_thresholds, '% of HbA1c Tests (> 75 mmol/mo
 ## Median Test Values
 
 def import_med(d):    
-    return pd.read_csv(f"{fpath}/input_med_t2dm_{d}.csv")
+    df = pd.read_csv(f"{fpath}/input_med_t2dm_{d}.csv")
+    df['date'] = df['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
+    return df
 
 df_med_t2dm = import_med('all')
 df_med_t2dm_age = import_med('age')
