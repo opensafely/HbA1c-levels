@@ -58,16 +58,16 @@ actions:
       moderately_sensitive:
         notebook: output/data_description.html
 
-  generate_median_inputs: 
-    run: python:latest python analysis/median_input.py
+  generate_change_inputs: 
+    run: python:latest python analysis/mean_change_input.py
     needs: [join_ethnicity_median]
     outputs:
       moderately_sensitive:
-        cohort: output/data/input_med_t2dm*.csv
+        cohort: output/data/input_chg_t2dm*.csv
 
   generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [redact_measures, generate_median_inputs]
+    needs: [redact_measures, generate_change_inputs]
     outputs:
       moderately_sensitive:
         notebook: output/charts.html
