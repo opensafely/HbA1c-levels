@@ -35,14 +35,15 @@ df_prev_t2dm = df_prev.loc[df_prev.diabetes_type == 'T2DM']
 pat_subset = df_prev_t2dm.loc[df_prev_t2dm.prev_hba1c_mmol_per_mol > 58]['patient_id'].unique()
 df_t2dm_subset = df_prev_t2dm.loc[df_prev_t2dm.patient_id.isin(pat_subset)]
 
-df_t2dm_subset['hba1c_chg'] = df_t2dm_subset.prev_hba1c_mmol_per_mol - df_t2dm_subset.hba1c_mmol_per_mol
+df_t2dm_subset['hba1c_chg'] = df_t2dm_subset['prev_hba1c_mmol_per_mol'] - df_t2dm_subset['hba1c_mmol_per_mol']
 
 # 58-74 range 
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_58_75 == 1), 
+df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) &
+                   (df_t2dm_subset.prev_hba1c_mmol_per_mol < 75), 
                    'hba1c_chg_58_74'] = df_t2dm_subset['hba1c_chg']
 
 # > 75
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_gt_75 == 1),
+df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 75),
                    'hba1c_chg_75'] = df_t2dm_subset['hba1c_chg']
 
 # Get mean of changes
