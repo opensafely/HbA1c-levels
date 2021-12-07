@@ -212,7 +212,7 @@ common_variables = dict(
     prev_hba1c_mmol_per_mol=patients.with_these_clinical_events(
         hba1c_new_codes,
         find_last_match_in_period=True,
-        between=["index_date - 15 months", "last_day_of_month(index_date)"],
+        between=["index_date - 15 months", "index_date - 1 day"],
         returning="numeric_value",
         include_date_of_match=True,
         return_expectations={
