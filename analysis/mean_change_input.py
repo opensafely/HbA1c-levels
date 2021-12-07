@@ -32,7 +32,8 @@ df_prev = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
 df_prev_t2dm = df_prev.loc[df_prev.diabetes_type == 'T2DM']
 
 # Get patient subset with poor glycemic control prior to the pandemic
-pat_subset = df_prev_t2dm.loc[df_prev_t2dm.prev_hba1c_mmol_per_mol > 58]['patient_id'].unique()
+pat_subset = df_prev_t2dm.loc[(df_prev_t2dm.prev_hba1c_mmol_per_mol > 58) & 
+                              (df_prev_t2dm.hba1c_mmol_per_mol > 0)]['patient_id'].unique()
 df_t2dm_subset = df_prev_t2dm.loc[df_prev_t2dm.patient_id.isin(pat_subset)]
 
 df_t2dm_subset['hba1c_chg'] = df_t2dm_subset['prev_hba1c_mmol_per_mol'] - df_t2dm_subset['hba1c_mmol_per_mol']
