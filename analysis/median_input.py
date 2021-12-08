@@ -28,39 +28,35 @@ for file in glob('output/data/input_median*.csv'):
     # Generates a count column
     df_temp['population'] = 1
     li.append(df_temp)
-    
-df_prev = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
-df_prev_t2dm = df_prev.loc[df_prev.diabetes_type == 'T2DM']
+
+df_median = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
+df_median_t2dm = df_median.loc[df_median.diabetes_type == 'T2DM']
 
 # Get patient subset with poor glycemic control prior to the pandemic
-pat_subset = df_prev_t2dm.loc[(df_prev_t2dm.prev_hba1c_mmol_per_mol > 58) & 
-                              (df_prev_t2dm.hba1c_mmol_per_mol > 0)]['patient_id'].unique()
-df_t2dm_subset = df_prev_t2dm.loc[df_prev_t2dm.patient_id.isin(pat_subset)]
-
-df_t2dm_subset['hba1c_chg'] = df_t2dm_subset['hba1c_mmol_per_mol'] - df_t2dm_subset['prev_hba1c_mmol_per_mol']
+pat_subset = df_median_t2dm.loc[df_median_t2dm.prev_hba1c_mmol_per_mol > 58]['patient_id'].unique()
+df_t2dm_subset = df_median_t2dm.loc[df_median_t2dm.patient_id.isin(pat_subset)]
 
 # 58-74 range 
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) &
+df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) & 
                    (df_t2dm_subset.prev_hba1c_mmol_per_mol < 75), 
-                   'hba1c_chg_58_74'] = df_t2dm_subset['hba1c_chg']
+                   'hba1c_val_58_74'] = df_t2dm_subset.hba1c_mmol_per_mol
 
 # > 75
 df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 75),
-                   'hba1c_chg_75'] = df_t2dm_subset['hba1c_chg']
+                   'hba1c_val_75'] = df_t2dm_subset.hba1c_mmol_per_mol
 
-
-# Get mean of changes
-def gen_mean(df_in, group=''):
+# Get median HbA1c
+def gen_median(df_in, group=''):
     
     groups = ['date']
     if group != '': 
         groups = ['date', group]
         
     df_out = df_in.groupby(groups).agg(
-                                       hba1c_chg_58_74 = ('hba1c_chg_58_74','mean'),
-                                       hba1c_chg_75 = ('hba1c_chg_75','mean'),
-                                       ct_58_74 = ('hba1c_chg_58_74','count'),
-                                       ct_75 = ('hba1c_chg_75','count'),
+                                       hba1c_val_58_74 = ('hba1c_val_58_74','median'),
+                                       hba1c_val_75 = ('hba1c_val_75','median'),
+                                       ct_58_74 = ('hba1c_val_58_74','count'),
+                                       ct_75 = ('hba1c_val_75','count'),
                                       ).reset_index()
 
     return df_out
@@ -77,11 +73,11 @@ lookup_dict = {
         "learning_disability":   {1:'Yes', 0:'No'}
 }
 
-df_chg_t2dm = gen_mean(df_t2dm_subset)
-df_chg_t2dm.to_csv('output/data/calc_chg_t2dm_all.csv')
+df_med_t2dm = gen_median(df_t2dm_subset)
+df_med_t2dm.to_csv('output/data/calc_med_t2dm_all.csv')
 
 for g in demo_vars:
-    df_tmp = gen_mean(df_t2dm_subset, g)
+    df_tmp = gen_median(df_t2dm_subset, g)
 
     if g in ['ethnicity', 'imd', 'learning_disability']:
         df_tmp = df_tmp.replace({g: lookup_dict[g]})
@@ -90,4 +86,4 @@ for g in demo_vars:
         df_tmp = df_tmp.loc[df_tmp.age_group != '0-15']
 
     # Export data
-    df_tmp.to_csv(f'output/data/calc_chg_t2dm_{demo_vars[g]}.csv')
+    df_tmp.to_csv(f'output/data/calc_med_t2dm_{demo_vars[g]}.csv')
