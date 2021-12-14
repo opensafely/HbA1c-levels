@@ -22,6 +22,10 @@ li = []
 
 for file in glob('output/data/input_median*.csv'):
     df_temp = pd.read_csv(file)[import_vars]
+    # Filter to T2DM patients with previously poor glycemic control (15 months before monthly index date)
+    df_temp = df_temp.loc[(df_temp.diabetes_type == 'T2DM') & 
+                          (df_temp.prev_hba1c_mmol_per_mol > 58) & 
+                          (df_temp.hba1c_mmol_per_mol > 0)]
     # Creates date variable based on file name
     df_temp['date'] = file[25:-4]
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
@@ -29,14 +33,9 @@ for file in glob('output/data/input_median*.csv'):
     df_temp['population'] = 1
     li.append(df_temp)
     
-df_prev = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
-df_prev_t2dm = df_prev.loc[df_prev.diabetes_type == 'T2DM']
+df_t2dm_subset = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
 
-# Get patient subset with poor glycemic control prior to the pandemic
-pat_subset = df_prev_t2dm.loc[(df_prev_t2dm.prev_hba1c_mmol_per_mol > 58) & 
-                              (df_prev_t2dm.hba1c_mmol_per_mol > 0)]['patient_id'].unique()
-df_t2dm_subset = df_prev_t2dm.loc[df_prev_t2dm.patient_id.isin(pat_subset)]
-
+# Change from previous HbA1c result
 df_t2dm_subset['hba1c_chg'] = df_t2dm_subset['hba1c_mmol_per_mol'] - df_t2dm_subset['prev_hba1c_mmol_per_mol']
 
 # 58-74 range 
