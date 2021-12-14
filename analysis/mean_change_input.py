@@ -30,8 +30,8 @@ for file in glob('output/data/input_median*.csv'):
     df_temp['hba1c_chg'] = df_temp['hba1c_mmol_per_mol'] - df_temp['prev_hba1c_mmol_per_mol']
     # 58-74 range 
     df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 58) &
-                (df_temp.prev_hba1c_mmol_per_mol < 75), 
-                'hba1c_chg_58_74'] = df_temp['hba1c_chg']
+                (df_temp.prev_hba1c_mmol_per_mol <= 75), 
+                'hba1c_chg_58_75'] = df_temp['hba1c_chg']
     # > 75
     df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 75),
                 'hba1c_chg_75'] = df_temp['hba1c_chg']
@@ -52,9 +52,9 @@ def gen_mean(df_in, group=''):
         groups = ['date', group]
         
     df_out = df_in.groupby(groups).agg(
-                                       hba1c_chg_58_74 = ('hba1c_chg_58_74','mean'),
+                                       hba1c_chg_58_75 = ('hba1c_chg_58_75','mean'),
                                        hba1c_chg_75 = ('hba1c_chg_75','mean'),
-                                       ct_58_74 = ('hba1c_chg_58_74','count'),
+                                       ct_58_75 = ('hba1c_chg_58_75','count'),
                                        ct_75 = ('hba1c_chg_75','count'),
                                       ).reset_index()
 
