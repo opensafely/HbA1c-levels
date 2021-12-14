@@ -22,6 +22,17 @@ li = []
 
 for file in glob('output/data/input_median*.csv'):
     df_temp = pd.read_csv(file)[import_vars]
+    # Filter to T2DM patients with previously poor glycemic control (15 months before monthly index date)
+    df_temp = df_temp.loc[(df_temp.diabetes_type == 'T2DM') & 
+                          (df_temp.prev_hba1c_mmol_per_mol > 58) & 
+                          (df_temp.hba1c_mmol_per_mol > 0)]
+    # 58-74 range 
+    df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 58) & 
+                (df_temp.prev_hba1c_mmol_per_mol <= 75), 
+                'hba1c_val_58_75'] = df_temp.hba1c_mmol_per_mol
+    # > 75
+    df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 75),
+                'hba1c_val_75'] = df_temp.hba1c_mmol_per_mol
     # Creates date variable based on file name
     df_temp['date'] = file[25:-4]
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
@@ -29,21 +40,7 @@ for file in glob('output/data/input_median*.csv'):
     df_temp['population'] = 1
     li.append(df_temp)
 
-df_median = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
-df_median_t2dm = df_median.loc[df_median.diabetes_type == 'T2DM']
-
-# Get patient subset with poor glycemic control prior to the pandemic
-pat_subset = df_median_t2dm.loc[df_median_t2dm.prev_hba1c_mmol_per_mol > 58]['patient_id'].unique()
-df_t2dm_subset = df_median_t2dm.loc[df_median_t2dm.patient_id.isin(pat_subset)]
-
-# 58-74 range 
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) & 
-                   (df_t2dm_subset.prev_hba1c_mmol_per_mol < 75), 
-                   'hba1c_val_58_74'] = df_t2dm_subset.hba1c_mmol_per_mol
-
-# > 75
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 75),
-                   'hba1c_val_75'] = df_t2dm_subset.hba1c_mmol_per_mol
+df_t2dm_subset = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
 
 # Get median HbA1c
 def gen_median(df_in, group=''):
@@ -53,14 +50,13 @@ def gen_median(df_in, group=''):
         groups = ['date', group]
         
     df_out = df_in.groupby(groups).agg(
-                                       hba1c_val_58_74 = ('hba1c_val_58_74','median'),
+                                       hba1c_val_58_75 = ('hba1c_val_58_75','median'),
                                        hba1c_val_75 = ('hba1c_val_75','median'),
-                                       ct_58_74 = ('hba1c_val_58_74','count'),
+                                       ct_58_75 = ('hba1c_val_58_75','count'),
                                        ct_75 = ('hba1c_val_75','count'),
                                       ).reset_index()
 
     return df_out
-
 
 # Format fields
 # Recode variables
