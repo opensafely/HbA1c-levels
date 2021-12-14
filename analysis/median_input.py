@@ -26,6 +26,13 @@ for file in glob('output/data/input_median*.csv'):
     df_temp = df_temp.loc[(df_temp.diabetes_type == 'T2DM') & 
                           (df_temp.prev_hba1c_mmol_per_mol > 58) & 
                           (df_temp.hba1c_mmol_per_mol > 0)]
+    # 58-74 range 
+    df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 58) & 
+                (df_temp.prev_hba1c_mmol_per_mol < 75), 
+                'hba1c_val_58_74'] = df_temp.hba1c_mmol_per_mol
+    # > 75
+    df_temp.loc[(df_temp.prev_hba1c_mmol_per_mol > 75),
+                'hba1c_val_75'] = df_temp.hba1c_mmol_per_mol
     # Creates date variable based on file name
     df_temp['date'] = file[25:-4]
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
@@ -34,15 +41,6 @@ for file in glob('output/data/input_median*.csv'):
     li.append(df_temp)
 
 df_t2dm_subset = pd.concat(li, axis=0, ignore_index=False).reset_index(drop=True)
-
-# 58-74 range 
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 58) & 
-                   (df_t2dm_subset.prev_hba1c_mmol_per_mol < 75), 
-                   'hba1c_val_58_74'] = df_t2dm_subset.hba1c_mmol_per_mol
-
-# > 75
-df_t2dm_subset.loc[(df_t2dm_subset.prev_hba1c_mmol_per_mol > 75),
-                   'hba1c_val_75'] = df_t2dm_subset.hba1c_mmol_per_mol
 
 # Get median HbA1c
 def gen_median(df_in, group=''):
