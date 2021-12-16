@@ -79,15 +79,9 @@ actions:
       moderately_sensitive:
         notebook: output/charts.html
 
-  generate_validity_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_east --index-date-range "2017-01-01 to 2021-06-01 by month" --output-dir=output/data 
-    outputs:
-      highly_sensitive:
-        cohort: output/data/input_east_*.csv
-
-  calculate_validity_measures:
-    run: cohortextractor:latest generate_measures --study-definition study_definition_east --output-dir=output/data
-    needs: [generate_validity_population]
+  generate_tables:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/tables.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [join_ethnicity_all_patients]
     outputs:
       moderately_sensitive:
-        measure_csv: output/data/measure_avg_*.csv
+        notebook: output/tables.html
