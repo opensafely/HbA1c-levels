@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import sys
 
+# Pull in ethnicity file
 ethnicity_df = pd.read_csv('output/data/input_ethnicity.csv')
 
 for file in os.listdir('output/data'):
