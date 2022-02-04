@@ -11,6 +11,12 @@ actions:
       highly_sensitive:
         cohort: output/data/input_all_patients_*.csv
 
+  generate_study_population_elev_predm:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_elev_predm --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
+    outputs:
+      highly_sensitive:
+        cohort: output/data/input_elev_predm_*.csv
+
   generate_study_population_median:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_median --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
     outputs:
@@ -29,6 +35,13 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/data/input_all_patients*.csv
+
+  join_ethnicity_elev_predm:
+    run: python:latest python analysis/join_ethnicity.py "input_elev_predm"
+    needs: [generate_study_population_elev_predm, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/data/input_elev_predm*.csv
 
   join_ethnicity_median:
     run: python:latest python analysis/join_ethnicity.py "input_median"
