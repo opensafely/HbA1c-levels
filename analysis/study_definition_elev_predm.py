@@ -45,21 +45,7 @@ study = StudyDefinition(
         """,
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
-        prev_elevated = patients.satisfying(
-            """
-            prepandemic_hba1c > 48
-            """
-        ),
-        prepandemic_prediabetes = patients.with_these_clinical_events(
-            codelist(["714628002","15777000"], system="snomed"),
-            find_last_match_in_period=True,
-            on_or_before="2020-03-01", # approx. pandemic start,
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.05,
-            }
-        ),
-    ),            
+    ),        
     prepandemic_hba1c = patients.with_these_clinical_events(
         hba1c_new_codes,
         find_last_match_in_period=True,
@@ -69,6 +55,20 @@ study = StudyDefinition(
             "float": {"distribution": "normal", "mean": 40.0, "stddev": 20},
             "incidence": 0.95,
         },
-    ),
+    ),  
+    prev_elevated = patients.satisfying(
+            """
+            prepandemic_hba1c > 48
+            """
+        ),
+    prepandemic_prediabetes = patients.with_these_clinical_events(
+        codelist(["714628002","15777000"], system="snomed"),
+        find_last_match_in_period=True,
+        on_or_before="2020-03-01", # approx. pandemic start,
+        returning="binary_flag",
+        return_expectations={
+            "incidence": 0.05,
+        }
+    ),  
     **common_variables
 )
