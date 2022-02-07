@@ -85,12 +85,27 @@ actions:
       moderately_sensitive:
         cohort: output/data/calc_med_t2dm*.csv
 
+  generate_elev_predm_inputs: 
+    run: python:latest python analysis/elev_predm_input.py
+    needs: [join_ethnicity_elev_predm]
+    outputs:
+      moderately_sensitive:
+        cohorts1: output/data/calc_t2dm_elev*.csv
+        cohorts2: output/data/calc_predm*.csv
+
   generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [redact_measures, generate_change_inputs, generate_median_inputs]
     outputs:
       moderately_sensitive:
         notebook: output/charts.html
+
+  generate_charts_elev_predm:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts_elev_predm.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [redact_measures, generate_elev_predm_inputs]
+    outputs:
+      moderately_sensitive:
+        notebook: output/charts_elev_predm.html
 
   generate_tables:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/tables.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
