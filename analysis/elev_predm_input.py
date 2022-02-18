@@ -15,7 +15,7 @@ demo_vars = {'age_group':'age', 'sex':'sex', 'ethnicity':'eth', 'region':'reg',
 threshold_vars = ['hba1c_gt_48', 'hba1c_gt_58', 'hba1c_gt_64', 'hba1c_gt_75']
 
 # Import variables
-import_vars = threshold_vars + list(demo_vars.keys()) + ['patient_id', 'diabetes_type', 'took_hba1c', 'prev_elevated',
+import_vars = threshold_vars + list(demo_vars.keys()) + ['patient_id', 'diabetes_type', 'took_hba1c', 'prev_elevated_48',
                                             'prepandemic_hba1c', 'hba1c_mmol_per_mol', 'prepandemic_prediabetes']
 
 # Read in and append input files
@@ -29,7 +29,7 @@ for file in glob('output/data/input_elev*.csv'):
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
     # Filter to T2DM patients with elevated HbA1c pre-pandemic
     df_temp_elev = df_temp.loc[(df_temp.diabetes_type == 'T2DM') & 
-                               (df_temp.prev_elevated == 1) & 
+                               (df_temp.prev_elevated_48 == 1) & 
                                (df_temp.hba1c_mmol_per_mol > 0)]
      # Filter to prediabetic patients pre-pandemic
     df_temp_predm = df_temp.loc[(df_temp.prepandemic_prediabetes == 1) & 
@@ -49,6 +49,7 @@ def gen_sum(df_in, group=''):
         groups = ['date', group]
         
     df_out = df_in.groupby(groups).agg(
+                                       ct_took_hba1c  = ('took_hba1c', 'sum'),
                                        ct_hba1c_gt_48 = ('hba1c_gt_48','sum'),
                                        ct_hba1c_gt_58 = ('hba1c_gt_58','sum'),
                                        ct_hba1c_gt_64 = ('hba1c_gt_64','sum'),
