@@ -17,12 +17,6 @@ actions:
       highly_sensitive:
         cohort: output/data/input_elev_predm_*.csv
 
-  generate_study_population_median:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_median --index-date-range "2019-01-01 to 2021-06-01 by month" --output-dir=output/data 
-    outputs:
-      highly_sensitive:
-        cohort: output/data/input_median_*.csv
-        
   generate_study_population_ethnicity:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output/data 
     outputs:
@@ -42,13 +36,6 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/data/input_elev_predm*.csv
-
-  join_ethnicity_median:
-    run: python:latest python analysis/join_ethnicity.py "input_median"
-    needs: [generate_study_population_median, generate_study_population_ethnicity]
-    outputs:
-      highly_sensitive:
-        cohort: output/data/input_median*.csv
 
   calculate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition_all_patients --output-dir=output/data
@@ -71,20 +58,6 @@ actions:
       moderately_sensitive:
         notebook: output/data_description.html
 
-  generate_change_inputs: 
-    run: python:latest python analysis/mean_change_input.py
-    needs: [join_ethnicity_median]
-    outputs:
-      moderately_sensitive:
-        cohort: output/data/calc_chg_t2dm*.csv
-
-  generate_median_inputs: 
-    run: python:latest python analysis/median_input.py
-    needs: [join_ethnicity_median]
-    outputs:
-      moderately_sensitive:
-        cohort: output/data/calc_med_t2dm*.csv
-
   generate_elev_predm_inputs: 
     run: python:latest python analysis/elev_predm_input.py
     needs: [join_ethnicity_elev_predm]
@@ -95,17 +68,10 @@ actions:
 
   generate_charts:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [redact_measures, generate_change_inputs, generate_median_inputs]
-    outputs:
-      moderately_sensitive:
-        notebook: output/charts.html
-
-  generate_charts_elev_predm:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/charts_elev_predm.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [redact_measures, generate_elev_predm_inputs]
     outputs:
       moderately_sensitive:
-        notebook: output/charts_elev_predm.html
+        notebook: output/charts.html
 
   generate_tables:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/tables.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input

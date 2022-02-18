@@ -15,7 +15,7 @@ diabetes_unknown_codes = codelist_from_csv(
 
 # Prediabetes 
 prediabetes_codes = codelist_from_csv(
-    "codelists/opensafely-prediabetes-snomed.csv", system='snomed', column='id'
+    "codelists/opensafely-prediabetes-snomed.csv", system='snomed', column='code'
 )
 
 # Ethnicity

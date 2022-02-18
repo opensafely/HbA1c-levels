@@ -41,7 +41,7 @@ study = StudyDefinition(
         (age >= 16 AND age <= 110) AND
         (diabetes_type != 'UNKNOWN_DM') AND
         (region != '') AND 
-        (prev_elevated OR prepandemic_prediabetes)
+        (prev_elevated_48 OR prepandemic_prediabetes)
         """,
         # Indicator for registration
         registered = patients.registered_as_of("index_date"),
@@ -56,9 +56,24 @@ study = StudyDefinition(
             "incidence": 0.95,
         },
     ),  
-    prev_elevated = patients.satisfying(
+    prev_elevated_48 = patients.satisfying(
             """
             prepandemic_hba1c > 48
+            """
+        ),
+    prev_elevated_58 = patients.satisfying(
+            """
+            prepandemic_hba1c > 58
+            """
+        ),
+    prev_elevated_64 = patients.satisfying(
+            """
+            prepandemic_hba1c > 64
+            """
+        ),
+    prev_elevated_75 = patients.satisfying(
+            """
+            prepandemic_hba1c > 75
             """
         ),
     prepandemic_prediabetes = patients.with_these_clinical_events(
