@@ -59,6 +59,12 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/dementia-complete/48c76cf8/",
       "downloaded_at": "2021-10-19 09:18:41.283315Z",
       "sha": "b73c9363f19a9ee9f4407e34e95e11d3eeb615f4"
+    },
+    "opensafely-prediabetes-snomed.csv": {
+      "id": "opensafely/prediabetes-snomed/6bdbb7dd",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/prediabetes-snomed/6bdbb7dd/",
+      "downloaded_at": "2022-02-18 16:31:26.901359Z",
+      "sha": "a52da34bd7178717df884211fca799db460a6b43"
     }
   }
 }

@@ -62,7 +62,7 @@ study = StudyDefinition(
             """
         ),
     prepandemic_prediabetes = patients.with_these_clinical_events(
-        codelist(["714628002","15777000"], system="snomed"),
+        prediabetes_codes,
         find_last_match_in_period=True,
         on_or_before="2020-03-01", # approx. pandemic start,
         returning="binary_flag",
