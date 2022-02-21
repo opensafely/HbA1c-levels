@@ -35,6 +35,9 @@ for file in glob('output/data/input_elev*.csv'):
     df_temp_predm = df_temp.loc[(df_temp.prepandemic_prediabetes == 1) & 
                                 (df_temp.hba1c_mmol_per_mol > 0)]
     # Generates a count column
+    df_temp_elev['population'] = 1
+    df_temp_predm['population'] = 1
+    # Append
     li_elev.append(df_temp_elev)
     li_predm.append(df_temp_predm)
     
@@ -49,12 +52,18 @@ def gen_sum(df_in, group=''):
         groups = ['date', group]
         
     df_out = df_in.groupby(groups).agg(
+                                       ct_population = ('population', 'sum'),
                                        ct_took_hba1c  = ('took_hba1c', 'sum'),
                                        ct_hba1c_gt_48 = ('hba1c_gt_48','sum'),
                                        ct_hba1c_gt_58 = ('hba1c_gt_58','sum'),
                                        ct_hba1c_gt_64 = ('hba1c_gt_64','sum'),
                                        ct_hba1c_gt_75 = ('hba1c_gt_75','sum'),
                                       ).reset_index()
+    df_out['tests_per_1000'] = (df_out['ct_took_hba1c']/df_out['ct_population'])*1000
+    df_out['gt48_per_1000'] = (df_out['ct_hba1c_gt_48']/df_out['ct_population'])*1000
+    df_out['gt58_per_1000'] = (df_out['ct_hba1c_gt_58']/df_out['ct_population'])*1000
+    df_out['gt64_per_1000'] = (df_out['ct_hba1c_gt_64']/df_out['ct_population'])*1000
+    df_out['gt75_per_1000'] = (df_out['ct_hba1c_gt_75']/df_out['ct_population'])*1000
 
     return df_out
 
