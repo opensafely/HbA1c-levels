@@ -57,6 +57,14 @@ def gen_sum(df_in, group=''):
                                        ct_hba1c_gt_64 = ('hba1c_gt_64','sum'),
                                        ct_hba1c_gt_75 = ('hba1c_gt_75','sum'),
                                       ).reset_index()
+    
+    # Apply redaction to low counts
+    ct_cols = ['ct_population','ct_took_hba1c', 'ct_hba1c_gt_48', 'ct_hba1c_gt_58',
+               'ct_hba1c_gt_64', 'ct_hba1c_gt_75']
+    for col in ct_cols:
+        df_out[col] = df_out[col].where(df_out[col] >= 6, np.nan)
+
+    # Create per 1,000 columns
     df_out['tests_per_1000'] = (df_out['ct_took_hba1c']/df_out['ct_population'])*1000
     df_out['gt48_per_1000'] = (df_out['ct_hba1c_gt_48']/df_out['ct_population'])*1000
     df_out['gt58_per_1000'] = (df_out['ct_hba1c_gt_58']/df_out['ct_population'])*1000
