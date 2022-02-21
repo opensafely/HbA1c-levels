@@ -29,11 +29,9 @@ for file in glob('output/data/input_elev*.csv'):
     df_temp['date'] = df_temp['date'].apply(lambda x: datetime.strptime(x.strip(), '%Y-%m-%d'))
     # Filter to T2DM patients with elevated HbA1c pre-pandemic
     df_temp_elev = df_temp.loc[(df_temp.diabetes_type == 'T2DM') & 
-                               (df_temp.prev_elevated_48 == 1) & 
-                               (df_temp.hba1c_mmol_per_mol > 0)]
+                               (df_temp.prev_elevated_48 == 1)]
      # Filter to prediabetic patients pre-pandemic
-    df_temp_predm = df_temp.loc[(df_temp.prepandemic_prediabetes == 1) & 
-                                (df_temp.hba1c_mmol_per_mol > 0)]
+    df_temp_predm = df_temp.loc[(df_temp.prepandemic_prediabetes == 1)]
     # Generates a count column
     df_temp_elev['population'] = 1
     df_temp_predm['population'] = 1
