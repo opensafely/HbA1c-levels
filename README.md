@@ -1,6 +1,6 @@
-# HbA1c Test Results During the COVID-19 Pandemic
+# OpenSAFELY: Describing trends and variation in HbA1c monitoring during COVID-19 in 22 million patients’ primary care records
 
-This is the code and configuration for an OpenSAFELY analysis examining HbA1c test results during the COVID-19 pandemic.
+This is the code and configuration for an OpenSAFELY analysis examining the impact of service disruption on HbA1c monitoring during the COVID-19 pandemic.
 
 * The paper is [here]()
 * Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/`
